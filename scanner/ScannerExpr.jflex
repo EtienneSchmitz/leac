@@ -48,7 +48,7 @@ import beaver.Scanner;
 /////////////////////////////////
 
 Identifier						= [a-zA-Z_][a-zA-Z0-9_]*
-Integer 						= ([0-9]+)|(0x[1-9A-F])+)
+Integer 						= ([0-9]+)|(0x[0-9A-F])+)
 //Decimal 							= ({Integer}(\.{Integer})?)|(\.{Integer})
 //Float 							= {Decimal}([eE][+-]?{Integer})?
 StringDelimiter 				= \"
@@ -160,6 +160,7 @@ Affectation						= "="
 Colons							= ":"
 SemiColon						= ";"
 Coma							= ","
+Dot								= "."
 
 
 /////////////////////////////////
@@ -269,6 +270,7 @@ Boolean							= "boolean"
 	{Colons}								{ return createSymbol(Terminals.); 							}
 	{SemiColon}								{ return createSymbol(Terminals.); 							}
 	{Coma}									{ return createSymbol(Terminals.); 							}
+	{Dot}									{ return createSymbol(Terminals.); 							}
 	
 	
 	/////////////////////////////////////////// Primitive types
