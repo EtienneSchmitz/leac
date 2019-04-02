@@ -1,4 +1,4 @@
-<project name="td4" default="help">
+<project name="projet" default="help">
 
 	<target name="jflextask" unless="jflex.available" description="creates JFlex Ant task">
 		<taskdef name="jflex" classname="jflex.anttask.JFlexTask" classpath="lib/jflex-full-1.7.0.jar" />
@@ -25,7 +25,7 @@
 	</target>
 
 	<target name="scanner" depends="jflextask" description="generate scanner">
-		<jflex file="scanner/Scanner.jflex" destdir="src" nobak="yes" />
+		<jflex file="scanner/scanner.jflex" destdir="src" nobak="yes" />
 	</target>
 
 	<target name="compile" depends="parser, scanner" description="compile all classes">

@@ -42,7 +42,7 @@
 %terminals TOKEN_SWITCH, TOKEN_CASE, TOKEN_DEFAULT;
 
 // PONCTS
-%terminals TOKEN_SEMIC, TOKEN_DOTDOT, TOKEN_COLON, TOKEN_COMMA;
+%terminals TOKEN_SEMIC, TOKEN_DOTDOT, TOKEN_COLON, TOKEN_COMMA, TOKEN_DOT;
 %terminals TOKEN_LPAR, TOKEN_RPAR, TOKEN_LBRACKET, TOKEN_RBRACKET, TOKEN_LBRACE, TOKEN_RBRACE;
 
 // OPERATORS
@@ -69,7 +69,7 @@
 *
 * b) quand vous souhaitez mettre du code avant la fin de la regle, 
 *     X= A {: je voudrais mettre du code ici :} B {: pour l'exploiter ici :}
-* utilisez une rege vide comme ceci:
+* utilisez une regle vide comme ceci:
 *
 *     X= A empty_X B {: pour l'exploiter ici  :} ;
 *     empty_X= {: je voudrais mettre du code ici :};
@@ -91,7 +91,7 @@ program=
 	statement_list
 	TOKEN_END
 	;
-	
+
 type_declaration_part= 
 	/* empty */	
 	| TOKEN_TYPE type_declaration_list
@@ -135,7 +135,7 @@ index_type=
 	;
 	
 enumerated_type=
-	TOKEN_LPAR identifier_listist TOKEN_RPAR 
+	TOKEN_LPAR identifier_list TOKEN_RPAR
 	;
 	
 subrange_type= 
@@ -149,7 +149,7 @@ array_type=
 	
 range_type=
 	enumerated_type
-	| subrange_type
+	| subrange_type.e
 	| named_type	
 	;
 	
@@ -160,6 +160,7 @@ pointer_type=
 structure_type=
 	TOKEN_STRUCT TOKEN_LBRACE feature_list_type TOKEN_RBRACE
 	;
+	// Ca c'est pour l'init de structure (en gros struct { })
 	
 feature_list_type=
 	feature_list_type feature_type

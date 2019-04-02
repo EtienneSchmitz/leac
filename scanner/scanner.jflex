@@ -192,92 +192,92 @@ Boolean							= "boolean"
 // Standard state. Our grammar is scanned in this section.
 <YYINITIAL> 
 {	
-	{Identifier}							{ return createSymbol(Terminals., yytext());				}
-	{Integer}								{ return createSymbol(Terminals., new Integer(yytext()));	}
+	{Identifier}							{ return createSymbol(Terminals.TOKEN_IDENTIFIER, yytext());				}
+	{Integer}								{ return createSymbol(Terminals.TOKEN_LIT_INTEGER, new Integer(yytext()));	}
 	
 	
 	/////////////////////////////////////////// Keywords
 	
-	{VariableDeclaration}					{ return createSymbol(Terminals.); 							}	
+	{VariableDeclaration}					{ return createSymbol(Terminals.TOKEN_VAR); 							}
 	
-	{StructureDeclaration}					{ return createSymbol(Terminals.); 							}
+	{StructureDeclaration}					{ return createSymbol(Terminals.TOKEN_STRUCT); 							}
 	
-	{ProcedureDefinition}					{ return createSymbol(Terminals.); 							}
-	{FunctionDefinition}					{ return createSymbol(Terminals.); 							}
+	{ProcedureDefinition}					{ return createSymbol(Terminals.TOKEN_PROCEDURE); 							}
+	{FunctionDefinition}					{ return createSymbol(Terminals.TOKEN_FUNCTION); 							}
 	
-	{StatementBlock_StartDelimiter}			{ return createSymbol(Terminals.); 							}
-	{StatementBlock_EndDelimiter}			{ return createSymbol(Terminals.); 							}
+	{StatementBlock_StartDelimiter}			{ return createSymbol(Terminals.TOKEN_BEGIN); 							}
+	{StatementBlock_EndDelimiter}			{ return createSymbol(Terminals.TOKEN_END); 							}
 	
-	{DynamicAllocation}						{ return createSymbol(Terminals.); 							}
-	{Deallocation}							{ return createSymbol(Terminals.); 							}
+	{DynamicAllocation}						{ return createSymbol(Terminals.TOKEN_NEW); 							}
+	{Deallocation}							{ return createSymbol(Terminals.TOKEN_DISPOSE); 							}
 	
-	{StdWrite}								{ return createSymbol(Terminals.); 							}
-	{StdRead}								{ return createSymbol(Terminals.); 							}
+	{StdWrite}								{ return createSymbol(Terminals.TOKEN_PRINTLN); 							}
+	{StdRead}								{ return createSymbol(Terminals.TOKEN_READLN); 							}
 	
-	{FunctionReturn}						{ return createSymbol(Terminals.); 							}
+	{FunctionReturn}						{ return createSymbol(Terminals.TOKEN_RETURN); 							}
 	
-	{IfStatement}							{ return createSymbol(Terminals.); 							}
-	{IfStatement_StartDelimiter}			{ return createSymbol(Terminals.); 							}
-	{IfStatement_ElseDelimiter}				{ return createSymbol(Terminals.); 							}
+	{IfStatement}							{ return createSymbol(Terminals.TOKEN_IF); 							}
+	{IfStatement_StartDelimiter}			{ return createSymbol(Terminals.TOKEN_THEN); 							}
+	{IfStatement_ElseDelimiter}				{ return createSymbol(Terminals.TOKEN_ELSE); 							}
 	
-	{WhileStatement}						{ return createSymbol(Terminals.); 							}
-	{WhileStatement_StartDelimiter}			{ return createSymbol(Terminals.); 							}
+	{WhileStatement}						{ return createSymbol(Terminals.TOKEN_WHILE); 							}
+	{WhileStatement_StartDelimiter}			{ return createSymbol(Terminals.TOKEN_DO); 							}
 	
-	{SwitchStatement}						{ return createSymbol(Terminals.); 							}
-	{SwitchStatement_CaseIdentifier}		{ return createSymbol(Terminals.); 							}
-	{SwitchStatement_DefaultCase}			{ return createSymbol(Terminals.); 							}
+	{SwitchStatement}						{ return createSymbol(Terminals.TOKEN_SWITCH); 							}
+	{SwitchStatement_CaseIdentifier}		{ return createSymbol(Terminals.TOKEN_CASE); 							}
+	{SwitchStatement_DefaultCase}			{ return createSymbol(Terminals.TOKEN_DEFAULT); 							}
 	
-	{TrueBoolean}							{ return createSymbol(Terminals.); 							}
-	{FalseBoolean}							{ return createSymbol(Terminals.); 							}
+	{TrueBoolean}							{ return createSymbol(Terminals.TOKEN_TRUE); 							}
+	{FalseBoolean}							{ return createSymbol(Terminals.TOKEN_FALSE); 							}
 	
-	{NullPointer}							{ return createSymbol(Terminals.); 							}
+	{NullPointer}							{ return createSymbol(Terminals.TOKEN_NULL); 							}
 	
 	
 	/////////////////////////////////////////// Operators
 	
-	{Plus}									{ return createSymbol(Terminals.); 							}
-	{Minus}									{ return createSymbol(Terminals.); 							}
-	{Times}									{ return createSymbol(Terminals.); 							}
-	{Divide}								{ return createSymbol(Terminals.); 							}
+	{Plus}									{ return createSymbol(Terminals.TOKEN_PLUS); 							}
+	{Minus}									{ return createSymbol(Terminals.TOKEN_MINUS); 							}
+	{Times}									{ return createSymbol(Terminals.TOKEN_TIMES); 							}
+	{Divide}								{ return createSymbol(Terminals.TOKEN_DIV); 							}
 	
-	{LogicalOr}								{ return createSymbol(Terminals.); 							}
-	{LogicalAnd}							{ return createSymbol(Terminals.); 							}
-	{Negation}								{ return createSymbol(Terminals.); 							}
+	{LogicalOr}								{ return createSymbol(Terminals.TOKEN_OR); 							}
+	{LogicalAnd}							{ return createSymbol(Terminals.TOKEN_AND); 							}
+	{Negation}								{ return createSymbol(Terminals.TOKEN_NOT); 							}
 		
-	{Less}									{ return createSymbol(Terminals.); 							}
-	{LessOrEquals}							{ return createSymbol(Terminals.); 							}
-	{Higher}								{ return createSymbol(Terminals.); 							}
-	{HigherOrEquals}						{ return createSymbol(Terminals.); 							}
-	{Equals}								{ return createSymbol(Terminals.); 							}
-	{NotEquals}								{ return createSymbol(Terminals.); 							}
+	{Less}									{ return createSymbol(Terminals.TOKEN_LT); 							}
+	{LessOrEquals}							{ return createSymbol(Terminals.TOKEN_LE); 							}
+	{Higher}								{ return createSymbol(Terminals.TOKEN_GT); 							}
+	{HigherOrEquals}						{ return createSymbol(Terminals.TOKEN_GE); 							}
+	{Equals}								{ return createSymbol(Terminals.TOKEN_EQ); 							}
+	{NotEquals}								{ return createSymbol(Terminals.TOKEN_NE); 							}
 	
-	{LeftParenthesis}						{ return createSymbol(Terminals.); 							}
-	{RightParenthesis}						{ return createSymbol(Terminals.); 							}
-	{LeftBracket}							{ return createSymbol(Terminals.); 							}
-	{RightBracket}							{ return createSymbol(Terminals.); 							}
-	{LeftCurlyBracket}						{ return createSymbol(Terminals.); 							}
-	{RightCurlyBracket}						{ return createSymbol(Terminals.); 							}
+	{LeftParenthesis}						{ return createSymbol(Terminals.TOKEN_LPAR); 							}
+	{RightParenthesis}						{ return createSymbol(Terminals.TOKEN_RPAR); 							}
+	{LeftBracket}							{ return createSymbol(Terminals.TOKEN_LBRACKET); 							}
+	{RightBracket}							{ return createSymbol(Terminals.TOKEN_RBRACKET); 							}
+	{LeftCurlyBracket}						{ return createSymbol(Terminals.TOKEN_LBRACE); 							}
+	{RightCurlyBracket}						{ return createSymbol(Terminals.TOKEN_RBRACE); 							}
 	
-	{Pointer}								{ return createSymbol(Terminals.); 							}
+	{Pointer}								{ return createSymbol(Terminals.TOKEN_CIRC); 							}
 	
-	{Subrange}								{ return createSymbol(Terminals.); 							}
+	{Subrange}								{ return createSymbol(Terminals.TOKEN_DOTDOT); 							}
 	
-	{Affectation}							{ return createSymbol(Terminals.); 							}
+	{Affectation}							{ return createSymbol(Terminals.TOKEN_AFF); 							}
 	
 	
 	/////////////////////////////////////////// Separators
 	
-	{Colons}								{ return createSymbol(Terminals.); 							}
-	{SemiColon}								{ return createSymbol(Terminals.); 							}
-	{Coma}									{ return createSymbol(Terminals.); 							}
-	{Dot}									{ return createSymbol(Terminals.); 							}
+	{Colons}								{ return createSymbol(Terminals.TOKEN_COLON); 							}
+	{SemiColon}								{ return createSymbol(Terminals.TOKEN_SEMIC); 							}
+	{Coma}									{ return createSymbol(Terminals.TOKEN_COMMA); 							}
+	{Dot}									{ return createSymbol(Terminals.TOKEN_DOT); 							}
 	
 	
 	/////////////////////////////////////////// Primitive types
 	
-	{StringType}							{ return createSymbol(Terminals.); 							}
-	{IntegerType}							{ return createSymbol(Terminals.); 							}
-	{Boolean}								{ return createSymbol(Terminals.); 							}
+	{StringType}							{ return createSymbol(Terminals.TOKEN_STRING); 							}
+	{IntegerType}							{ return createSymbol(Terminals.TOKEN_INTEGER); 							}
+	{Boolean}								{ return createSymbol(Terminals.TOKEN_BOOLEAN); 							}
 
 	{StringDelimiter}						{ stringBuilder.setLength(0); yybegin(STRING); 				}
 	{Comment}								{ // Do nothing, comments are not treated. 					}
@@ -287,7 +287,7 @@ Boolean							= "boolean"
 // Some regex below are from the jflex manual (https://jflex.de/manual.html).
 <STRING> 
 {
-	{StringDelimiter}						{ yybegin(YYINITIAL); return createSymbol(Terminals., stringBuilder.toString()); }
+	{StringDelimiter}						{ yybegin(YYINITIAL); return createSymbol(Terminals.TOKEN_LIT_STRING, stringBuilder.toString()); }
 	\\{StringDelimiter}						{ stringBuilder.append(yytext()); }
 	
 	[^\n\r\"\\]+                   			{ stringBuilder.append(yytext()); }
