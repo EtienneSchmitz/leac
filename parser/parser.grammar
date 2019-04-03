@@ -126,7 +126,7 @@ simple_type=
 	;
 	
 named_type=
-	TOKEN_IDENTIFIER	empty
+	TOKEN_IDENTIFIER /* empty */
 	;
 	
 index_type=
@@ -240,7 +240,7 @@ block=
 	;
 
 statement_list=
-	statement_listl statement
+	statement_list statement
 	| statement
 	;
 	
