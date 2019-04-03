@@ -280,7 +280,7 @@ Boolean							= "boolean"
 	{Boolean}								{ return createSymbol(Terminals.TOKEN_BOOLEAN); 							}
 
 	{StringDelimiter}						{ stringBuilder.setLength(0); yybegin(STRING); 				}
-	{Comment}								{ // Do nothing, comments are not treated. 					}
+	{Comment}								{ 				                                            } // Do nothing, comments are not treated.
 }
 
 // State between two string delimiters. Our grammar has no effects here.
@@ -297,4 +297,4 @@ Boolean							= "boolean"
 	"\\"									{ stringBuilder.append('\\'); }					
 }
 
-[ ] {}
+[^]|\n	{}

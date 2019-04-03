@@ -15,9 +15,11 @@ public class Main {
 			} else {
 				Scanner input = new Scanner(new FileReader(arg));
 				Parser parser = new Parser();
+				parser.parse(input);
+				/*
 				try {
 					System.err.println("*** Fichier " + arg);
-					Node result = (Node) parser.parse(input);
+					//Node result = (Node) parser.parse(input);
 					System.err.println("*** Analyse syntaxique ok");
 					if (checksType) {
 						if (!result.checksType())
@@ -27,7 +29,7 @@ public class Main {
 					}
 				} catch (beaver.Parser.Exception e) {
 					System.err.println("*** Erreur de syntaxe: " + arg + ":" + e.getMessage());
-				}
+				}*/
 			}
 
 		}

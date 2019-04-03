@@ -4,9 +4,9 @@
 
 %package "ubordeaux.deptinfo.compilation.project.main";
 %class "Parser";
-%import "ubordeaux.deptinfo.compilation.project.node.*";
-%import "ubordeaux.deptinfo.compilation.project.type.*";
-%import "ubordeaux.deptinfo.compilation.project.environment.*";
+//%import "ubordeaux.deptinfo.compilation.project.node.*";
+//%import "ubordeaux.deptinfo.compilation.project.type.*";
+//%import "ubordeaux.deptinfo.compilation.project.environment.*";
 
 %embed {: 
 	static class Events extends beaver.Parser.events {
@@ -24,10 +24,10 @@
 				Symbol.getColumn(token.getStart()));
 		}
 		
-	private Environment typeEnvironment = new Environment("types");
-	private Environment procedureEnvironment = new Environment("procedures");
-	private StackEnvironment stackEnvironment = new StackEnvironment("local variables stack");
-	private String type_declaration_name;
+	//private Environment typeEnvironment = new Environment("types");
+	//private Environment procedureEnvironment = new Environment("procedures");
+	//private StackEnvironment stackEnvironment = new StackEnvironment("local variables stack");
+	//private String type_declaration_name;
 	
 :};
 

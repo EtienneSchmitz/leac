@@ -1,0 +1,4 @@
+type string='string';int='integer';varBoolean='boolean';
+'begin'
+t=true;
+'end'
