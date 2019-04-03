@@ -2,7 +2,7 @@ package ubordeaux.deptinfo.compilation.project.main;
 
 import java.io.FileReader;
 
-import ubordeaux.deptinfo.compilation.project.node.Node;
+//import ubordeaux.deptinfo.compilation.project.node.Node;
 
 public class Main {
 	private static boolean checksType;
@@ -13,7 +13,7 @@ public class Main {
 				if (arg.equals("-checkType"))
 					checksType = true;
 			} else {
-				Scanner input = new Scanner(new FileReader(arg));
+				ScannerLea input = new ScannerLea(new FileReader(arg));
 				Parser parser = new Parser();
 				parser.parse(input);
 				/*

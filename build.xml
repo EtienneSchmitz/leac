@@ -44,14 +44,14 @@
 		</path>
 		<java classname="ubordeaux.deptinfo.compilation.project.main.Main" classpath="bin" classpathref="beaverclasspath" output="data/output">
 			<arg value="data/testParser-1.lea" />
-			<arg value="-checkType" />
-			<arg value="data/testType-1.lea" />
+			<!--<arg value="-checkType" />
+			<arg value="data/testType-1.lea" />-->
 		</java>
 	</target>
 
 	<target name="clean" description="remove compiled files">
 		<delete>
-			<fileset dir="src" includes="**/Parser.java,**/Scanner.java,**/Terminals.java" />
+			<fileset dir="src" includes="**/Parser.java,**/ScannerLea.java,**/Terminals.java" />
 			<fileset dir="bin" includes="**" excludes="" />
 			<fileset dir="data" includes="output" excludes="" />
 		</delete>

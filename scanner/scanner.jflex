@@ -1,9 +1,10 @@
+package ubordeaux.deptinfo.compilation.project.main;
+
 import beaver.Symbol;
 import beaver.Scanner;
 
 %%
-
-%class ScannerExpr
+%class ScannerLea
 %extends Scanner
 %function nextToken
 %type Symbol
@@ -191,8 +192,7 @@ Boolean							= "boolean"
 
 // Standard state. Our grammar is scanned in this section.
 <YYINITIAL> 
-{	
-	{Identifier}							{ return createSymbol(Terminals.TOKEN_IDENTIFIER, yytext());				}
+{
 	{Integer}								{ return createSymbol(Terminals.TOKEN_LIT_INTEGER, new Integer(yytext()));	}
 	
 	
@@ -270,7 +270,7 @@ Boolean							= "boolean"
 	{Colons}								{ return createSymbol(Terminals.TOKEN_COLON); 							}
 	{SemiColon}								{ return createSymbol(Terminals.TOKEN_SEMIC); 							}
 	{Coma}									{ return createSymbol(Terminals.TOKEN_COMMA); 							}
-	{Dot}									{ return createSymbol(Terminals.TOKEN_DOT); 							}
+	//{Dot}									{ return createSymbol(Terminals.TOKEN_DOT); 							}
 	
 	
 	/////////////////////////////////////////// Primitive types
@@ -281,6 +281,7 @@ Boolean							= "boolean"
 
 	{StringDelimiter}						{ stringBuilder.setLength(0); yybegin(STRING); 				}
 	{Comment}								{ 				                                            } // Do nothing, comments are not treated.
+	{Identifier}							{ return createSymbol(Terminals.TOKEN_IDENTIFIER, yytext());				}
 }
 
 // State between two string delimiters. Our grammar has no effects here.
@@ -289,10 +290,11 @@ Boolean							= "boolean"
 {
 	{StringDelimiter}						{ yybegin(YYINITIAL); return createSymbol(Terminals.TOKEN_LIT_STRING, stringBuilder.toString()); }
 	\\{StringDelimiter}						{ stringBuilder.append(yytext()); }
-	
+
+
+	"\t"									{ stringBuilder.append('\t'); }
 	[^\n\r\"\\]+                   			{ stringBuilder.append(yytext()); }
-	"\n"									{ stringBuilder.append('\n'); }				
-	"\t"									{ stringBuilder.append('\t'); }			
+	"\n"									{ stringBuilder.append('\n'); }
 	"\r"									{ stringBuilder.append('\r'); }	
 	"\\"									{ stringBuilder.append('\\'); }					
 }
