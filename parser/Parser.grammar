@@ -56,6 +56,16 @@
 * A completer
 ***/
 
+//PRIORITY
+%right TOKEN_CIRC;
+%left TOKEN_TIMES,TOKEN_DIV;
+%left TOKEN_PLUS,TOKEN_MINUS;
+%left TOKEN_NOT;
+%left TOKEN_LT,TOKEN_LE,TOKEN_GT,TOKEN_GE,TOKEN_EQ,TOKEN_NE;
+%left TOKEN_AND;
+%left TOKEN_OR;
+%left TOKEN_ELSE;
+
 %goal program;
 
 /***

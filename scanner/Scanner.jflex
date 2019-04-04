@@ -49,7 +49,8 @@ import beaver.Scanner;
 /////////////////////////////////
 
 Identifier						= [a-zA-Z_][a-zA-Z0-9_]*
-Integer 						= ([0-9]+)|(0x[0-9A-F])+
+Integer 						= ([0-9]+)
+IntegerHexadecimal              = (0x[0-9A-F]+)
 //Decimal 							= ({Integer}(\.{Integer})?)|(\.{Integer})
 //Float 							= {Decimal}([eE][+-]?{Integer})?
 StringDelimiter 				= \"
@@ -83,7 +84,13 @@ Comment 						= {TraditionalComment} | {EndOfLineComment} | {DocumentationCommen
 
 VariableDeclaration				= "var"
 
+ArrayDeclaration                = "array"
+
+ArrayTypeDeclaration            = "of"
+
 StructureDeclaration			= "struct"
+
+TypeDeclaration                 = "type"
 
 ProcedureDefinition				= "procedure"
 FunctionDefinition				= "function"
@@ -194,14 +201,21 @@ Boolean							= "boolean"
 <YYINITIAL> 
 {
 	{Integer}								{ return createSymbol(Terminals.TOKEN_LIT_INTEGER, new Integer(yytext()));	}
-	
+	{IntegerHexadecimal}                        { return createSymbol(Terminals.TOKEN_LIT_INTEGER, Integer.parseInt(yytext().substring(2,yytext().length()),16));}
 	
 	/////////////////////////////////////////// Keywords
 	
 	{VariableDeclaration}					{ return createSymbol(Terminals.TOKEN_VAR); 							}
-	
+
+	{ArrayDeclaration}                      { return createSymbol(Terminals.TOKEN_ARRAY);                           }
+
+    {ArrayTypeDeclaration}                  { return createSymbol(Terminals.TOKEN_OF);                           }
+
+
 	{StructureDeclaration}					{ return createSymbol(Terminals.TOKEN_STRUCT); 							}
-	
+
+	{TypeDeclaration}                       { return createSymbol(Terminals.TOKEN_TYPE);  }
+
 	{ProcedureDefinition}					{ return createSymbol(Terminals.TOKEN_PROCEDURE); 							}
 	{FunctionDefinition}					{ return createSymbol(Terminals.TOKEN_FUNCTION); 							}
 	
