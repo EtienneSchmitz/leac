@@ -57,6 +57,7 @@
 ***/
 
 //PRIORITY
+%right PRIORMAX;
 %right TOKEN_CIRC;
 %left TOKEN_TIMES,TOKEN_DIV;
 %left TOKEN_PLUS,TOKEN_MINUS;
@@ -65,6 +66,7 @@
 %left TOKEN_AND;
 %left TOKEN_OR;
 %left TOKEN_ELSE;
+%left TOKEN_IF;
 
 %goal program;
 
@@ -355,7 +357,7 @@ expression=
 	| expression TOKEN_MINUS expression
 	| expression TOKEN_TIMES expression
 	| expression TOKEN_DIV expression
-	| TOKEN_MINUS expression
+	| TOKEN_MINUS expression         @PRIORMAX
 	| expression TOKEN_OR expression
 	| expression TOKEN_AND expression
 	| TOKEN_NOT expression
