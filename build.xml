@@ -1,4 +1,4 @@
-<project name="projet" default="help">
+<project name="Projet LEA" default="help">
 
 	<target name="jflextask" unless="jflex.available" description="creates JFlex Ant task">
 		<taskdef name="jflex" classname="jflex.anttask.JFlexTask" classpath="lib/jflex-full-1.7.0.jar" />
@@ -21,11 +21,11 @@
 	</target>
 
 	<target name="parser" depends="beavertask" description="generate parser">
-		<beaver file="parser/parser.grammar" destdir="src" compress="yes" exportTables="no" sortTerminals="no" terminalNames="yes" exportTerminals="yes" useSwitch="no" anonymousActions="yes" reportActions="no" />
+		<beaver file="parser/Parser.grammar" destdir="src" compress="yes" exportTables="no" sortTerminals="no" terminalNames="yes" exportTerminals="yes" useSwitch="no" anonymousActions="yes" reportActions="no" />
 	</target>
 
 	<target name="scanner" depends="jflextask" description="generate scanner">
-		<jflex file="scanner/scanner.jflex" destdir="src" nobak="yes" />
+		<jflex file="scanner/Scanner.jflex" destdir="src" nobak="yes" />
 	</target>
 
 	<target name="compile" depends="parser, scanner" description="compile all classes">
@@ -43,19 +43,18 @@
 			<fileset dir="lib" includes="jflex-full-1.7.0.jar" />
 		</path>
 		<java classname="ubordeaux.deptinfo.compilation.project.main.Main" classpath="bin" classpathref="beaverclasspath" output="data/output">
-			<arg value="data/testParser-1.lea" />
-			<!--<arg value="-checkType" />
-			<arg value="data/testType-1.lea" />-->
+			<arg value="data/progr1.lea" />
+			<arg value="-checkType" />
+			<arg value="data/progr2.lea" />
 		</java>
 	</target>
 
 	<target name="clean" description="remove compiled files">
 		<delete>
 			<fileset dir="src" includes="**/Parser.java,**/ScannerLea.java,**/Terminals.java" />
-			<fileset dir="bin" includes="**" excludes="" />
-			<fileset dir="data" includes="output" excludes="" />
+			<fileset dir="bin" includes="**" />
+			<fileset dir="data" includes="output" />
 		</delete>
 	</target>
 
 </project>
-
