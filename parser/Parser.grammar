@@ -90,7 +90,6 @@
 *	| xxx.elt {: MyList list = new MyList(); list.add(elt); return list; :}
 *	;
 *
-*
 ***/
 
 program=

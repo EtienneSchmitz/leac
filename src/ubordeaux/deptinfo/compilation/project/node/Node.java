@@ -18,7 +18,6 @@ public abstract class Node extends ClonableSymbol implements NodeInterface {
 		this.uniqId = Node.staticUniqId++;
 		//System.err.println("Create class " + this.getClass().getSimpleName());
 		this.elts = new ArrayList<Node>();
-		
 	}
 
 	public Node(Node ... args) {
