@@ -1,8 +1,8 @@
 package ubordeaux.deptinfo.compilation.project.main;
 
-import java.io.FileReader;
+import ubordeaux.deptinfo.compilation.project.node.Node;
 
-//import ubordeaux.deptinfo.compilation.project.node.Node;
+import java.io.FileReader;
 
 public class Main {
 	private static boolean checksType;
@@ -15,7 +15,8 @@ public class Main {
 			} else {
 				ScannerLea input = new ScannerLea(new FileReader(arg));
 				Parser parser = new Parser();
-				parser.parse(input);
+				Node result = (Node) parser.parse(input);
+				System.out.println(result.toString());
 				/*
 				try {
 					System.err.println("*** Fichier " + arg);

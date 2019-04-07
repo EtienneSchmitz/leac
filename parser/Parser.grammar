@@ -1,10 +1,10 @@
 %package "ubordeaux.deptinfo.compilation.project.main";
 %class "Parser";
-//%import "ubordeaux.deptinfo.compilation.project.node.*";
-//%import "ubordeaux.deptinfo.compilation.project.type.*";
+%import "ubordeaux.deptinfo.compilation.project.node.*";
+%import "ubordeaux.deptinfo.compilation.project.type.*";
 //%import "ubordeaux.deptinfo.compilation.project.environment.*";
-//%import "java.util.ArrayList";
-//%import "java.util.Iterator";
+%import "java.util.ArrayList";
+%import "java.util.Iterator";
 
 %embed {:
 	static class Events extends beaver.Parser.Events {
@@ -52,10 +52,6 @@
 // LITERALS
 %terminals TOKEN_IDENTIFIER, TOKEN_LIT_INTEGER, TOKEN_LIT_STRING, TOKEN_TRUE, TOKEN_FALSE, TOKEN_NULL;
 
-/***
-* A completer
-***/
-
 //PRIORITY
 %right PRIORMAX;
 %right TOKEN_CIRC;
@@ -67,6 +63,12 @@
 %left TOKEN_OR;
 %left TOKEN_ELSE;
 %left TOKEN_IF;
+
+// Types
+%typeof statement_list = "NodeList";
+%typeof variable_access, expression = "NodeExp";
+%typeof statement = "Node";
+%typeof assignment_statement = "NodeAssign";
 
 %goal program;
 
@@ -97,8 +99,8 @@ program=
 	variable_declaration_part
 	procedure_definition_part
 	TOKEN_BEGIN
-	statement_list
-	TOKEN_END
+	statement_list.stm
+	TOKEN_END               {: return stm; :}
 	;
 
 type_declaration_part=
@@ -250,8 +252,8 @@ block=
 	;
 
 statement_list=
-	statement_list statement
-	| statement
+	statement_list.list statement.elt           {: list.add(elt); return list; :}
+	| statement.elt                             {: NodeList list = new NodeList(); list.add(elt); return list; :}
 	;
 
 statement=
@@ -270,7 +272,7 @@ simple_statement=
 	;
 
 assignment_statement=
-	variable_access TOKEN_AFF expression TOKEN_SEMIC
+	variable_access.var TOKEN_AFF expression.expr TOKEN_SEMIC       {: return new NodeAssign(var, expr); :}
 	;
 
 procedure_statement=
@@ -346,7 +348,7 @@ case_default=
 	; // Change
 
 variable_access=
-	TOKEN_IDENTIFIER
+	TOKEN_IDENTIFIER.id                                            {: return new NodeId((String) id.value, new TypeInt()); :} // TODO : Change the new Type by a type to choose with the environment.
 	| variable_access TOKEN_LBRACKET expression TOKEN_RBRACKET
 	| expression TOKEN_CIRC
 	;
@@ -373,7 +375,7 @@ expression=
 	;
 
 literal=
-	TOKEN_LIT_INTEGER
+	TOKEN_LIT_INTEGER.literal       {: return new NodeLiteral(new TypeInt(), literal.value); :}
 	| TOKEN_LIT_STRING
 	| TOKEN_TRUE
 	| TOKEN_FALSE
