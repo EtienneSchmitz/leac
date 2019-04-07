@@ -2,7 +2,7 @@
 %class "Parser";
 %import "ubordeaux.deptinfo.compilation.project.node.*";
 %import "ubordeaux.deptinfo.compilation.project.type.*";
-//%import "ubordeaux.deptinfo.compilation.project.environment.*";
+%import "ubordeaux.deptinfo.compilation.project.environment.*";
 %import "java.util.ArrayList";
 %import "java.util.Iterator";
 
@@ -22,10 +22,10 @@
 				Symbol.getColumn(token.getStart()));
 		}
 
-	//private Environment typeEnvironment = new Environment("types");
-	//private Environment procedureEnvironment = new Environment("procedures");
-	//private StackEnvironment stackEnvironment = new StackEnvironment("local variables stack");
-	//private String type_declaration_name;
+	private Environment typeEnvironment = new Environment("types");
+	// private Environment procedureEnvironment = new Environment("procedures");
+	// private StackEnvironment stackEnvironment = new StackEnvironment("local variables stack");
+	private String type_declaration_name;
 
 :};
 
@@ -68,11 +68,13 @@
 %typeof statement_list = "NodeList";
 %typeof variable_access, expression = "NodeExp";
 %typeof statement = "Node";
+%typeof type = "Type";
 %typeof assignment_statement = "NodeAssign";
 %typeof TOKEN_IDENTIFIER, TOKEN_LIT_STRING = "String";
 %typeof TOKEN_LIT_INTEGER = "Integer";
 %typeof TOKEN_TRUE, TOKEN_FALSE = "Boolean";
 %typeof TOKEN_NULL = "Object";
+%typeof identifier_list = "ArrayList<String>"
 
 %goal program;
 
@@ -136,7 +138,7 @@ type=
 
 simple_type=
 	TOKEN_STRING
-	| TOKEN_INTEGER
+	| TOKEN_INTEGER {: return new TypeInt(); :}
 	| TOKEN_BOOLEAN
 	;
 
@@ -199,12 +201,12 @@ variable_declaration_list=
 	;
 
 variable_declaration=
-	identifier_list TOKEN_COLON type TOKEN_SEMIC
+	identifier_list.list TOKEN_COLON type.type TOKEN_SEMIC {: for(String id : list) { typeEnvironment.add(id, type) ;} :}
 	;
 
 identifier_list=
-	identifier_list TOKEN_COMMA TOKEN_IDENTIFIER
-	| TOKEN_IDENTIFIER
+	identifier_list.list TOKEN_COMMA TOKEN_IDENTIFIER.id {: list.add(id); return list; :}
+	| TOKEN_IDENTIFIER.id                                {: ArrayList<String> list = new ArrayList<String>(); list.add(id); return list; :}
 	;
 
 procedure_definition_part=
