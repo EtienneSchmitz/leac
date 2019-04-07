@@ -69,6 +69,10 @@
 %typeof variable_access, expression = "NodeExp";
 %typeof statement = "Node";
 %typeof assignment_statement = "NodeAssign";
+%typeof TOKEN_IDENTIFIER, TOKEN_LIT_STRING = "String";
+%typeof TOKEN_LIT_INTEGER = "Integer";
+%typeof TOKEN_TRUE, TOKEN_FALSE = "Boolean";
+%typeof TOKEN_NULL = "Object";
 
 %goal program;
 
@@ -348,7 +352,7 @@ case_default=
 	; // Change
 
 variable_access=
-	TOKEN_IDENTIFIER.id                                            {: return new NodeId((String) id.value, new TypeInt()); :} // TODO : Change the new Type by a type to choose with the environment.
+	TOKEN_IDENTIFIER.id                                            {: return new NodeId(id, new TypeInt()); :} // TODO : Change the new Type by a type to choose with the environment.
 	| variable_access TOKEN_LBRACKET expression TOKEN_RBRACKET
 	| expression TOKEN_CIRC
 	;
@@ -375,9 +379,9 @@ expression=
 	;
 
 literal=
-	TOKEN_LIT_INTEGER.literal       {: return new NodeLiteral(new TypeInt(), literal.value); :}
-	| TOKEN_LIT_STRING
-	| TOKEN_TRUE
-	| TOKEN_FALSE
-	| TOKEN_NULL
+	TOKEN_LIT_INTEGER.literal       {: return new NodeLiteral(new TypeInt(literal), literal); :}
+	| TOKEN_LIT_STRING.literal      {: return new NodeLiteral(new TypeString(), literal); :}
+	| TOKEN_TRUE.literal            {: return new NodeLiteral(new TypeBoolean(), literal); :}
+	| TOKEN_FALSE.literal           {: return new NodeLiteral(new TypeBoolean(), literal); :}
+	| TOKEN_NULL.literal            {: return new NodeLiteral(new TypePointer(), literal); :}
 	;
