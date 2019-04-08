@@ -26,7 +26,6 @@
 	// private Environment procedureEnvironment = new Environment("procedures");
 	// private StackEnvironment stackEnvironment = new StackEnvironment("local variables stack");
 	private String type_declaration_name;
-
 :};
 
 %init {:
@@ -74,7 +73,7 @@
 %typeof TOKEN_LIT_INTEGER = "Integer";
 %typeof TOKEN_TRUE, TOKEN_FALSE = "Boolean";
 %typeof TOKEN_NULL = "Object";
-%typeof identifier_list = "ArrayList<String>"
+%typeof identifier_list = "IdentifierListSymbol";
 
 %goal program;
 
@@ -201,12 +200,12 @@ variable_declaration_list=
 	;
 
 variable_declaration=
-	identifier_list.list TOKEN_COLON type.type TOKEN_SEMIC {: for(String id : list) { typeEnvironment.add(id, type) ;} :}
+	identifier_list.list TOKEN_COLON type.type TOKEN_SEMIC {: for(String id : list.getList()) { typeEnvironment.add(id, new NodeId(id,type)); } return list; :}
 	;
 
 identifier_list=
 	identifier_list.list TOKEN_COMMA TOKEN_IDENTIFIER.id {: list.add(id); return list; :}
-	| TOKEN_IDENTIFIER.id                                {: ArrayList<String> list = new ArrayList<String>(); list.add(id); return list; :}
+	| TOKEN_IDENTIFIER.id                                {: IdentifierListSymbol list = new IdentifierListSymbol(); list.add(id); return list; :}
 	;
 
 procedure_definition_part=
