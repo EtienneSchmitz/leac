@@ -136,9 +136,9 @@ type=
 	;
 
 simple_type=
-	TOKEN_STRING
+	TOKEN_STRING 	{: return new TypeString(); :}
 	| TOKEN_INTEGER {: return new TypeInt(); :}
-	| TOKEN_BOOLEAN
+	| TOKEN_BOOLEAN	{: return new TypeBoolean(); :}
 	;
 
 named_type=
@@ -331,7 +331,7 @@ if_statement=
 	;
 
 while_statement=
-	TOKEN_WHILE expression TOKEN_DO statement
+	TOKEN_WHILE expression TOKEN_DO statement //{:  :}
 	;
 
 switch_statement=
@@ -353,7 +353,7 @@ case_default=
 	; // Change
 
 variable_access=
-	TOKEN_IDENTIFIER.id                                            {: return new NodeId(id, new TypeInt()); :} // TODO : Change the new Type by a type to choose with the environment.
+	TOKEN_IDENTIFIER.id                                            {: return typeEnvironment.get(id); :} // TODO : Change the new Type by a type to choose with the environment.
 	| variable_access TOKEN_LBRACKET expression TOKEN_RBRACKET
 	| expression TOKEN_CIRC
 	;

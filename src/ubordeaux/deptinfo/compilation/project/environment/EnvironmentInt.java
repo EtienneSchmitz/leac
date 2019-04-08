@@ -6,5 +6,5 @@ public interface EnvironmentInt {
     void add(String var, Node node);
 
     // Get a variable in environment.
-    Node getNode(String key);
+    Node get(String key);
 }

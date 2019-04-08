@@ -15,12 +15,10 @@ public class Main {
 			} else {
 				ScannerLea input = new ScannerLea(new FileReader(arg));
 				Parser parser = new Parser();
-				Node result = (Node) parser.parse(input);
-				System.out.println(result.toString());
-				/*
 				try {
 					System.err.println("*** Fichier " + arg);
-					//Node result = (Node) parser.parse(input);
+					Node result = (Node) parser.parse(input);
+					System.out.println(result.toString());
 					System.err.println("*** Analyse syntaxique ok");
 					if (checksType) {
 						if (!result.checksType())
@@ -30,7 +28,7 @@ public class Main {
 					}
 				} catch (beaver.Parser.Exception e) {
 					System.err.println("*** Erreur de syntaxe: " + arg + ":" + e.getMessage());
-				}*/
+				}
 			}
 
 		}

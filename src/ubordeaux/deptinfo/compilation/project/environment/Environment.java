@@ -23,7 +23,7 @@ public class Environment implements EnvironmentInt {
     }
 
     @Override
-    public Node getNode(String key) {
+    public Node get(String key) {
 
         return map.get(key);
     }
