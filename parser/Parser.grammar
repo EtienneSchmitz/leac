@@ -1,5 +1,7 @@
 %package "ubordeaux.deptinfo.compilation.project.main";
+
 %class "Parser";
+
 %import "ubordeaux.deptinfo.compilation.project.node.*";
 %import "ubordeaux.deptinfo.compilation.project.type.*";
 %import "ubordeaux.deptinfo.compilation.project.environment.*";
@@ -74,6 +76,7 @@
 %typeof TOKEN_TRUE, TOKEN_FALSE = "Boolean";
 %typeof TOKEN_NULL = "Object";
 %typeof identifier_list = "IdentifierListSymbol";
+%typeof while_statement = "NodeWhile";
 
 %goal program;
 
@@ -252,8 +255,8 @@ argt=
 block=
 	variable_declaration_part
 	TOKEN_BEGIN
-	statement_list
-	TOKEN_END
+	statement_list.stm 
+	TOKEN_END {: return stm; :}
 	;
 
 statement_list=
@@ -331,7 +334,7 @@ if_statement=
 	;
 
 while_statement=
-	TOKEN_WHILE expression TOKEN_DO statement //{:  :}
+	TOKEN_WHILE expression.expr TOKEN_DO statement.stm {: return new NodeWhile(expr, stm); :}
 	;
 
 switch_statement=
@@ -353,26 +356,26 @@ case_default=
 	; // Change
 
 variable_access=
-	TOKEN_IDENTIFIER.id                                            {: return typeEnvironment.get(id); :} // TODO : Change the new Type by a type to choose with the environment.
+	TOKEN_IDENTIFIER.id                                            {: return typeEnvironment.get(id); :}
 	| variable_access TOKEN_LBRACKET expression TOKEN_RBRACKET
 	| expression TOKEN_CIRC
 	;
 
 expression=
-	expression TOKEN_PLUS expression
-	| expression TOKEN_MINUS expression
-	| expression TOKEN_TIMES expression
-	| expression TOKEN_DIV expression
-	| TOKEN_MINUS expression         @PRIORMAX
-	| expression TOKEN_OR expression
-	| expression TOKEN_AND expression
+	expression.e1 TOKEN_PLUS expression.e2						   	{: return new NodeOp("plus",e1, e2); :}
+	| expression.e1 TOKEN_MINUS expression.e2						{: return new NodeOp("minus",e1, e2); :}
+	| expression.e1 TOKEN_TIMES expression.e2						{: return new NodeOp("times",e1, e2); :}
+	| expression.e1 TOKEN_DIV expression.e2							{: return new NodeOp("division",e1, e2); :}
+	| TOKEN_MINUS expression  @PRIORMAX
+	| expression.e1 TOKEN_OR expression.e2							{: return new NodeRel("or", e1, e2); :}
+	| expression.e1 TOKEN_AND expression.e2							{: return new NodeRel("and", e1, e2); :}
 	| TOKEN_NOT expression
-	| expression TOKEN_LT expression
-	| expression TOKEN_LE expression
-	| expression TOKEN_GT expression
-	| expression TOKEN_GE expression
-	| expression TOKEN_EQ expression
-	| expression TOKEN_NE expression
+	| expression.e1 TOKEN_LT expression.e2							{: return new NodeRel("lesser_than", e1, e2); :}
+	| expression.e1 TOKEN_LE expression.e2							{: return new NodeRel("lesser_or_equal", e1, e2); :}
+	| expression.e1 TOKEN_GT expression.e2							{: return new NodeRel("greater_than", e1, e2); :}
+	| expression.e1 TOKEN_GE expression.e2 						   	{: return new NodeRel("great_or_equal", e1, e2); :}
+	| expression.e1 TOKEN_EQ expression.e2							{: return new NodeRel("equal", e1, e2); :}
+	| expression.e1 TOKEN_NE expression.e2							{: return new NodeRel("not_equal", e1, e2); :}
 	| TOKEN_LPAR expression TOKEN_RPAR
 	| procedure_expression
 	| variable_access

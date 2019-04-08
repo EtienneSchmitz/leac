@@ -1,9 +1,9 @@
-var a, b: integer; c: string;
+var a,b : integer;
 
 begin
     a = 100;
-   while (a >= 0) do
+    while a != 0 && b == 0 do
 	begin
-	    a = a - 1;
+        a = a-1;
     end
 end
