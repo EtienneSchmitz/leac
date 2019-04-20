@@ -15,6 +15,13 @@ public class NodeRel extends NodeExp {
 		this.type = new TypeBoolean();
 	}
 
+	//Relation unaire ("not")
+	public NodeRel(String name,Node op){
+		super(op);
+		this.name = name;
+		this.type= new TypeBoolean();
+	}
+
 	@Override
 	public boolean checksType() {
 		super.checksType();

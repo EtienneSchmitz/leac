@@ -24,7 +24,7 @@
 				Symbol.getColumn(token.getStart()));
 		}
 
-	public void  debug(Object msg) {
+	public void debug(Object msg) {
         System.out.println(msg);
     }
 
@@ -336,12 +336,12 @@ structured_statement=
 	;
 
 if_statement=
-	TOKEN_IF expression TOKEN_THEN statement
-	| TOKEN_IF expression TOKEN_THEN statement TOKEN_ELSE statement
+	TOKEN_IF expression.expr TOKEN_THEN statement.stm                                           {: return new NodeIf(expr, stm); :}
+	| TOKEN_IF expression.expr TOKEN_THEN statement.stm1 TOKEN_ELSE statement.stm2              {: return new NodeIf(expr, stm1,stm2); :}
 	;
 
 while_statement=
-	TOKEN_WHILE expression.expr TOKEN_DO statement.stm {: return new NodeWhile(expr, stm); :}
+	TOKEN_WHILE expression.expr TOKEN_DO statement.stm                                          {: return new NodeWhile(expr, stm); :}
 	;
 
 switch_statement=
@@ -373,10 +373,10 @@ expression=
 	| expression.e1 TOKEN_MINUS expression.e2						{: return new NodeOp("minus",e1, e2); :}
 	| expression.e1 TOKEN_TIMES expression.e2						{: return new NodeOp("times",e1, e2); :}
 	| expression.e1 TOKEN_DIV expression.e2							{: return new NodeOp("division",e1, e2); :}
-	| TOKEN_MINUS expression  @PRIORMAX
+	| TOKEN_MINUS expression.e  @PRIORMAX                           {: return new NodeOp("minus",e); :}
 	| expression.e1 TOKEN_OR expression.e2							{: return new NodeRel("or", e1, e2); :}
 	| expression.e1 TOKEN_AND expression.e2							{: return new NodeRel("and", e1, e2); :}
-	| TOKEN_NOT expression
+	| TOKEN_NOT expression.e                                        {: debug(e); return new NodeRel("not", e); :}
 	| expression.e1 TOKEN_LT expression.e2							{: return new NodeRel("lesser_than", e1, e2); :}
 	| expression.e1 TOKEN_LE expression.e2							{: return new NodeRel("lesser_or_equal", e1, e2); :}
 	| expression.e1 TOKEN_GT expression.e2							{: return new NodeRel("greater_than", e1, e2); :}

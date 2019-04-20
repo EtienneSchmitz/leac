@@ -1,17 +1,9 @@
-var a,b,c,d : integer;
+var
+d,b : integer;
 
 begin
-    a = 1;
-    b = 200;
-    c = 300;
     d = 400;
-    switch (a)
-         begin
-            case a,c:
-              b=a;
-             case b,d:
-              c=a;
-            default:
-              d=a;
-         end
+    b = 20;
+    if (!d==400) then d=4; else d=6;
+
 end
