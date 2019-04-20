@@ -1,9 +1,17 @@
-var a,b : integer;
+var a,b,c,d : integer;
 
 begin
-    a = 100;
-    while a != 0 && b == 0 do
-	begin
-        a = a-1;
-    end
+    a = 1;
+    b = 200;
+    c = 300;
+    d = 400;
+    switch (a)
+         begin
+            case a,c:
+              b=a;
+             case b,d:
+              c=a;
+            default:
+              d=a;
+         end
 end

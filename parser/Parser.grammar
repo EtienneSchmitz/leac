@@ -24,6 +24,10 @@
 				Symbol.getColumn(token.getStart()));
 		}
 
+	public void  debug(Object msg) {
+        System.out.println(msg);
+    }
+
 	private Environment typeEnvironment = new Environment("types");
 	// private Environment procedureEnvironment = new Environment("procedures");
 	// private StackEnvironment stackEnvironment = new StackEnvironment("local variables stack");
@@ -76,8 +80,11 @@
 %typeof TOKEN_TRUE, TOKEN_FALSE = "Boolean";
 %typeof TOKEN_NULL = "Object";
 %typeof identifier_list = "IdentifierListSymbol";
-%typeof while_statement = "NodeWhile";
-
+%typeof while_statement= "NodeWhile";
+%typeof switch_statement= "NodeSwitch";
+%typeof case_statement_list = "NodeList";
+%typeof case_statement = "NodeCaseList";
+%typeof case_default = "NodeCase";
 %goal program;
 
 /***
@@ -338,21 +345,21 @@ while_statement=
 	;
 
 switch_statement=
-	TOKEN_SWITCH expression TOKEN_BEGIN case_statement_list TOKEN_END
+	TOKEN_SWITCH expression.expr TOKEN_BEGIN case_statement_list.stm TOKEN_END  {: return new NodeSwitch(expr, stm); :}
 	;
 
 case_statement_list=
-	case_statement_list case_statement case_default
-	| case_statement
+	case_statement_list.list case_statement.elt case_default.dft                {: list.add(elt); list.add(dft); return list; :}
+	| case_statement.elt                                                        {: NodeList list = new NodeList(); list.add(elt); return list; :}
 	;
 
 case_statement=
-	TOKEN_CASE identifier_list TOKEN_COLON statement
+	TOKEN_CASE identifier_list.idlist TOKEN_COLON statement.stm                 {: NodeCaseList list = new NodeCaseList(); for(String id : idlist.getList()){list.add(new NodeCase(id,stm));} return list; :}
 	;
 
 case_default=
-	/* empty */
-	| TOKEN_DEFAULT TOKEN_COLON statement
+	/* empty */                                                                 {: return new NodeCase(null); :}
+	| TOKEN_DEFAULT TOKEN_COLON statement.stm                                   {: return new NodeCase(stm); :}
 	; // Change
 
 variable_access=
@@ -376,7 +383,7 @@ expression=
 	| expression.e1 TOKEN_GE expression.e2 						   	{: return new NodeRel("great_or_equal", e1, e2); :}
 	| expression.e1 TOKEN_EQ expression.e2							{: return new NodeRel("equal", e1, e2); :}
 	| expression.e1 TOKEN_NE expression.e2							{: return new NodeRel("not_equal", e1, e2); :}
-	| TOKEN_LPAR expression TOKEN_RPAR
+	| TOKEN_LPAR expression.e TOKEN_RPAR                            {: return e; :}
 	| procedure_expression
 	| variable_access
 	| literal

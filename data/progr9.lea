@@ -138,3 +138,4 @@ begin
 	dispose x;  // error "Type error in pointer access expression"
 
 end
+
