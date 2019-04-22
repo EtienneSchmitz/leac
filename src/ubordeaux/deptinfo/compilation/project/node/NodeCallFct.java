@@ -1,10 +1,10 @@
 package ubordeaux.deptinfo.compilation.project.node;
 
-import java.util.Iterator;
-
+import ubordeaux.deptinfo.compilation.project.type.Type;
 import ubordeaux.deptinfo.compilation.project.type.TypeFeature;
 import ubordeaux.deptinfo.compilation.project.type.TypeFunct;
-import ubordeaux.deptinfo.compilation.project.type.Type;
+
+import java.util.Iterator;
 
 public final class NodeCallFct extends NodeExp {
 
@@ -48,7 +48,8 @@ public final class NodeCallFct extends NodeExp {
 				result = false;
 				break;
 			}
-			Type argType = arg.type;
+			Type argType = arg.getType();
+			// chaque paramètre est une feature nom : type
 			Type paramType = ((TypeFeature) itParams.next()).getType();
 			if (!paramType.equals(argType)) {
 				System.err.println("*** Erreur de typage " + argType + " != " + paramType);

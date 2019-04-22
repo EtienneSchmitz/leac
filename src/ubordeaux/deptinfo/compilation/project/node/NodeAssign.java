@@ -17,7 +17,7 @@ public final class NodeAssign extends Node {
 			return false;
 		Type lhsType = this.getLhs().getType();
 		Type rhsType = this.getRhs().getType();
-		if (lhsType==null || rhsType==null || !lhsType.equals(rhsType)) 
+		if (lhsType == null || rhsType == null || !lhsType.equals(rhsType))
 			return false;
 		else
 			return true;
@@ -26,7 +26,7 @@ public final class NodeAssign extends Node {
 	private NodeExp getLhs() {
 		return (NodeExp) this.get(0);
 	};
-	
+
 	private NodeExp getRhs() {
 		return (NodeExp) this.get(1);
 	}
@@ -35,6 +35,5 @@ public final class NodeAssign extends Node {
 	public NodeAssign clone() {
 		return new NodeAssign((NodeExp) getLhs().clone(), (NodeExp) getRhs().clone());
 	};
-	
 
 }

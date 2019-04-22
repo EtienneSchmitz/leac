@@ -51,7 +51,7 @@ public abstract class TypeComplex extends Type {
 		return true;
 	}
 
-	public int arity() {
+	public int size() {
 		return componant.size();
 	}
 

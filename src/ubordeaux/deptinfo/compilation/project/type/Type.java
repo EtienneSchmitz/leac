@@ -88,8 +88,8 @@ public abstract class Type extends ClonableSymbol implements Comparable<Type>, T
 		else if ((this instanceof TypeComplex) 
 				&& (obj instanceof TypeComplex) 
 				&& (this.getClass() == obj.getClass())
-				&& ((TypeComplex) this).arity() == ((TypeComplex) obj).arity()) {
-			for (int i = 0; i < ((TypeComplex) this).arity(); ++i) {
+				&& ((TypeComplex) this).size() == ((TypeComplex) obj).size()) {
+			for (int i = 0; i < ((TypeComplex) this).size(); ++i) {
 				Subst subst = ((TypeComplex)this).get(i).diff(((TypeComplex)obj).get(i));
 				if (subst != null)
 					result.add(subst);

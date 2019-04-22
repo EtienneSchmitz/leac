@@ -2,6 +2,5 @@ var
 d : array [ 1 .. 10 ] of string;
 
 begin
-    d[1]="B";
-    d[2]="B";
+    d[2]="5";
 end

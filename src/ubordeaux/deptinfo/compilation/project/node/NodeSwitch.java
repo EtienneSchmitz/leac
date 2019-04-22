@@ -9,6 +9,10 @@ public final class NodeSwitch extends Node {
 	@Override
 	public boolean checksType() {
 		super.checksType();
+		if (!get(0).checksType())
+			return false;
+		if (!get(1).checksType())
+			return false;
 		return true;
 	}
 
