@@ -1,0 +1,49 @@
+*** Fichier data/progrTest.lea
+--> TOKEN_VAR : var
+--> TOKEN_IDENTIFIER : d
+--> TOKEN_COMMA : ,
+--> TOKEN_IDENTIFIER : b
+--> TOKEN_COLON : :
+--> TOKEN_INTEGER : integer
+--> TOKEN_SEMIC : ;
+--> TOKEN_BEGIN : begin
+d registered
+b registered
+--> TOKEN_IDENTIFIER : d
+--> TOKEN_AFF : =
+--> TOKEN_LIT_INTEGER : 400
+--> TOKEN_SEMIC : ;
+--> TOKEN_IDENTIFIER : b
+--> TOKEN_AFF : =
+--> TOKEN_LIT_INTEGER : 20
+--> TOKEN_SEMIC : ;
+--> TOKEN_IF : if
+--> TOKEN_LPAR : (
+--> TOKEN_NOT : !
+--> TOKEN_IDENTIFIER : d
+--> TOKEN_EQ : ==
+NodeId#d:TypeInt_null#
+--> TOKEN_LIT_INTEGER : 400
+--> TOKEN_RPAR : )
+--> TOKEN_THEN : then
+--> TOKEN_IDENTIFIER : d
+--> TOKEN_AFF : =
+--> TOKEN_LIT_INTEGER : 4
+--> TOKEN_SEMIC : ;
+--> TOKEN_ELSE : else
+--> TOKEN_IDENTIFIER : d
+--> TOKEN_AFF : =
+--> TOKEN_LIT_INTEGER : 6
+--> TOKEN_SEMIC : ;
+--> TOKEN_END : end
+NodeList(NodeAssign(NodeId#d:TypeInt_null#, NodeLiteral#400:TypeInt_400#), NodeAssign(NodeId#b:TypeInt_null#, NodeLiteral#20:TypeInt_20#), NodeIf(NodeRel(NodeRel(NodeId#d:TypeInt_null#), NodeLiteral#400:TypeInt_400#), NodeAssign(NodeId#d:TypeInt_null#, NodeLiteral#4:TypeInt_4#), NodeAssign(NodeId#d:TypeInt_null#, NodeLiteral#6:TypeInt_6#)))
+*** Analyse syntaxique ok
+--- CheckType NodeList
+--- CheckType NodeAssign
+--- CheckType NodeId
+--- CheckType NodeLiteral
+--- CheckType NodeAssign
+--- CheckType NodeId
+--- CheckType NodeLiteral
+--- CheckType NodeIf
+*** Typage correct

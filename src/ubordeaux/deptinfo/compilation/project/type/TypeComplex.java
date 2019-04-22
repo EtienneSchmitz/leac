@@ -5,16 +5,16 @@ import java.util.Vector;
 // Tout type qui compose d'autres types
 public abstract class TypeComplex extends Type {
 
-	protected Vector<Type> componant;
+	protected Vector<Type> component;
 
 	public TypeComplex() {
 		super();
-		this.componant = new Vector<Type>();
+		this.component = new Vector<Type>();
 	}
 
 	public TypeComplex(Vector<Type> componant) {
 		super();
-		this.componant = componant;
+		this.component = componant;
 	}
 
 	public TypeComplex(Type... ts) {
@@ -23,16 +23,16 @@ public abstract class TypeComplex extends Type {
 	}
 
 	public void add(Type t) {
-		this.componant.add(t);
+		this.component.add(t);
 	}
 
 	public void addAll(Type... ts) {
 		for (Type t : ts)
-			this.componant.add(t);
+			this.component.add(t);
 	}
 
 	public Type get(int n) {
-		return componant.get(n);
+		return component.get(n);
 	}
 
 	@Override
@@ -43,47 +43,47 @@ public abstract class TypeComplex extends Type {
 		if (!(obj instanceof TypeComplex))
 			return false;
 		TypeComplex real_t = (TypeComplex) obj;
-		if (componant.size() != real_t.componant.size())
+		if (component.size() != real_t.component.size())
 			return false;
-		for (int i = 0; i < componant.size(); ++i)
-			if (!componant.get(i).equals(real_t.componant.get(i)))
+		for (int i = 0; i < component.size(); ++i)
+			if (!component.get(i).equals(real_t.component.get(i)))
 				return false;
 		return true;
 	}
 
 	public int arity() {
-		return componant.size();
+		return component.size();
 	}
 
 	@Override
 	public Type mapping(Subst subst) {
 		Vector<Type> clone = new Vector<Type>();
-		for (Type t : componant)
+		for (Type t : component)
 			clone.add(t.mapping(subst));
-		componant = clone;
+		component = clone;
 		return this;
 	}
 
 	@Override
 	public String toString() {
 		String ret = this.getClass().getSimpleName();
-		if (this.componant.size() > 0)
+		if (this.component.size() > 0)
 			ret += '(';
 		boolean first = true;
-		for (Type elt : this.componant) {
+		for (Type elt : this.component) {
 			if (first)
 				first = false;
 			else
 				ret += ", ";
 			ret += elt.toString();
 		}
-		if (this.componant.size() > 0)
+		if (this.component.size() > 0)
 			ret += ')';
 		return ret;
 	}
 
 	public void set(int i, Type type) {
-		this.componant.set(i, type);
+		this.component.set(i, type);
 	}
 
 }

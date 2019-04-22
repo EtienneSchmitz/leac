@@ -25,7 +25,7 @@ public class TypeFeature extends TypeComplex {
 	@Override
 	public String toString() {
 		String ret = '[' + name + ':';
-		for (Type elt : this.componant) {
+		for (Type elt : this.component) {
 			ret += elt.toString();
 		}
 		ret += ']';
@@ -33,7 +33,7 @@ public class TypeFeature extends TypeComplex {
 	}
 
 	public Type getType() {
-		return this.componant.get(0);
+		return this.component.get(0);
 	}
 
 	public String getName() {

@@ -24,7 +24,7 @@ public class TypeTuple extends TypeComplex {
 
 	public Boolean attestAllEqual() {
 		Type t = get(0);
-		for (Type o : componant)
+		for (Type o : component)
 			if (!t.equals(o)) {
 				return false;
 			}
@@ -40,7 +40,7 @@ public class TypeTuple extends TypeComplex {
 	public String toString() {
 		String str = "(";
 		boolean first = true;
-		for (Type t : componant) {
+		for (Type t : component) {
 			if (first)
 				first = false;
 			else
@@ -54,17 +54,17 @@ public class TypeTuple extends TypeComplex {
 	@Override
 	public TypeTuple clone() {
 		Vector<Type> componant = new Vector<Type>();
-		for (Type t : this.componant)
+		for (Type t : this.component)
 			componant.add((Type) t.clone());
 		return new TypeTuple(componant);
 	}
 
 	public Iterator<Type> iterator() {
-		return componant.iterator();
+		return component.iterator();
 	}
 
 	public int size() {
-		return this.componant.size();
+		return this.component.size();
 	}
 
 }

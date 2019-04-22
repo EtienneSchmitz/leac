@@ -85,6 +85,12 @@
 %typeof case_statement_list = "NodeList";
 %typeof case_statement = "NodeCaseList";
 %typeof case_default = "NodeCase";
+%typeof procedure_definition_head = "TypeFunct";
+%typeof procedure_declaration_head = "TypeFunct";
+%typeof procedure_head = "TypeFunct";
+%typeof argt_part = "TypeTuple";
+%typeof argt_list = "TypeTuple";
+%typeof argt = "NodeId";
 %goal program;
 
 /***
@@ -233,30 +239,30 @@ procedure_definition=
 	;
 
 procedure_definition_head=
-	procedure_head
+	procedure_head.funct	{: return funct;	:}
 	;
 
 procedure_declaration_head=
-	procedure_head
+	procedure_head.funct	{: return funct; 	:}
 	;
 
 procedure_head=
-	TOKEN_PROCEDURE TOKEN_IDENTIFIER TOKEN_LPAR argt_part TOKEN_RPAR
-	| TOKEN_FUNCTION TOKEN_IDENTIFIER TOKEN_LPAR argt_part TOKEN_RPAR TOKEN_COLON type
+	TOKEN_PROCEDURE TOKEN_IDENTIFIER.id TOKEN_LPAR argt_part.args TOKEN_RPAR								{: return TypeFunct(id, args, null);		:}
+	| TOKEN_FUNCTION TOKEN_IDENTIFIER.id TOKEN_LPAR argt_part.args TOKEN_RPAR TOKEN_COLON type.ret_type		{: return TypeFunct(id, args, ret_type);	:}
 	;
 
 argt_part=
-	/* empty */
-	| argt_list
+	/* empty */												{: return new TypeTuple();				:}
+	| argt_list.list										{: return list; 						:}
 	;
 
 argt_list=
-	argt_list TOKEN_COMMA argt
-	| argt
+	argt_list.list TOKEN_COMMA argt.arg						{: return list.add(arg.getType()); 		:}						
+	| argt.arg												{: return new TypeTuple(arg.getType()); :}					
 	;
 
 argt=
-	TOKEN_IDENTIFIER TOKEN_COLON type
+	TOKEN_IDENTIFIER.id TOKEN_COLON type.t					{: return new NodeId(id, t):}
 	;
 
 block=
