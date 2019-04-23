@@ -148,7 +148,13 @@ public class Parser extends beaver.Parser {
 			Action.RETURN,	// [16] named_type = TOKEN_IDENTIFIER
 			Action.RETURN,	// [17] index_type = enumerated_type
 			Action.RETURN,	// [18] index_type = subrange_type
-			RETURN4,	// [19] enumerated_type = init_enumerated_type TOKEN_LPAR identifier_list TOKEN_RPAR; returns 'TOKEN_RPAR' although none is marked
+			new Action() {	// [19] enumerated_type = init_enumerated_type TOKEN_LPAR identifier_list.list TOKEN_RPAR
+				public Symbol reduce(Symbol[] _symbols, int offset) {
+					final Symbol _symbol_list = _symbols[offset + 3];
+					final IdentifierListSymbol list = (IdentifierListSymbol) _symbol_list.value;
+					int length= list.getList().size(); return new TypeEnumRange(new TypeItemEnum(0,list.getList().get(0)),new TypeItemEnum(length-1,list.getList().get(length-1)));
+				}
+			},
 			Action.NONE,  	// [20] init_enumerated_type = 
 			new Action() {	// [21] subrange_type = TOKEN_LIT_INTEGER.int1 TOKEN_DOTDOT TOKEN_LIT_INTEGER.int2
 				public Symbol reduce(Symbol[] _symbols, int offset) {

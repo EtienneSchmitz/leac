@@ -179,7 +179,7 @@ index_type=
 	;
 
 enumerated_type=
-	init_enumerated_type TOKEN_LPAR identifier_list TOKEN_RPAR
+	init_enumerated_type TOKEN_LPAR identifier_list.list TOKEN_RPAR {:int length= list.getList().size(); return new TypeEnumRange(new TypeItemEnum(0,list.getList().get(0)),new TypeItemEnum(length-1,list.getList().get(length-1)));:}
 	;
 
 init_enumerated_type=

@@ -10,7 +10,6 @@ end
 function sum(i : integer, j : integer) : integer
 var k:integer;
 begin
-  x = 2;
   return (i+j);
 end
 
