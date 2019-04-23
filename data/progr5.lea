@@ -2,9 +2,15 @@
 var
 x : integer;
 
+function foo() : integer
+begin
+	return 1;
+end
+
 function sum(i : integer, j : integer) : integer
 var k:integer;
 begin
+  x = 2;
   return (i+j);
 end
 
@@ -18,14 +24,10 @@ begin
   return (i);
 end
 
-function foo() : integer
-begin
-	return 1;
-end
-
 begin
 x = 5;
-x = sum(3, 5);
+//x = sum(3, 5);
+sum(3, 5);
 //println sum(3, 5);
 //println(pgcd(78, 90));
 end

@@ -1,7 +1,7 @@
 package ubordeaux.deptinfo.compilation.project.main;
 
+import ubordeaux.deptinfo.compilation.project.environment.FunctionEnvironment.Function;
 import java.util.Iterator;
-import ubordeaux.deptinfo.compilation.project.environment.FuncEnvironment.Function;
 import ubordeaux.deptinfo.compilation.project.environment.*;
 import ubordeaux.deptinfo.compilation.project.type.*;
 import beaver.*;
@@ -94,8 +94,8 @@ public class Parser extends beaver.Parser {
     }
 
 	private Environment typeEnvironment = new Environment("types");
-	private FuncEnvironment funcEnv = new FuncEnvironment();
-	//private StackEnvironment stackEnvironment = new StackEnvironment("local variables stack");
+	private FunctionEnvironment funcEnv = new FunctionEnvironment();
+	private StackEnvironment stackEnv = new StackEnvironment();
 	private String type_declaration_name;
 
 	private final Action[] actions;
@@ -107,7 +107,7 @@ public class Parser extends beaver.Parser {
 				public Symbol reduce(Symbol[] _symbols, int offset) {
 					final Symbol _symbol_stm = _symbols[offset + 5];
 					final NodeList stm = (NodeList) _symbol_stm.value;
-					 return stm;
+					 stackEnv.closeCurrentScope(); return stm;
 				}
 			},
 			Action.NONE,  	// [1] type_declaration_part = 
@@ -185,16 +185,32 @@ public class Parser extends beaver.Parser {
 				}
 			},
 			RETURN4,	// [31] feature_type = TOKEN_IDENTIFIER TOKEN_COLON type TOKEN_SEMIC; returns 'TOKEN_SEMIC' although none is marked
-			Action.NONE,  	// [32] variable_declaration_part = 
-			RETURN2,	// [33] variable_declaration_part = TOKEN_VAR variable_declaration_list; returns 'variable_declaration_list' although none is marked
-			new Action() {	// [34] variable_declaration_list = variable_declaration_list variable_declaration
+			new Action() {	// [32] variable_declaration_part = 
 				public Symbol reduce(Symbol[] _symbols, int offset) {
-					((ArrayList) _symbols[offset + 1].value).add(_symbols[offset + 2]); return _symbols[offset + 1];
+					 NodeList list = new NodeList(); stackEnv.addToCurrentScope(list); return list;
 				}
 			},
-			new Action() {	// [35] variable_declaration_list = variable_declaration
+			new Action() {	// [33] variable_declaration_part = TOKEN_VAR variable_declaration_list.list
 				public Symbol reduce(Symbol[] _symbols, int offset) {
-					ArrayList lst = new ArrayList(); lst.add(_symbols[offset + 1]); return new Symbol(lst);
+					final Symbol _symbol_list = _symbols[offset + 2];
+					final NodeList list = (NodeList) _symbol_list.value;
+					 stackEnv.addToCurrentScope(list); return list;
+				}
+			},
+			new Action() {	// [34] variable_declaration_list = variable_declaration_list.global_list variable_declaration.list
+				public Symbol reduce(Symbol[] _symbols, int offset) {
+					final Symbol _symbol_global_list = _symbols[offset + 1];
+					final NodeList global_list = (NodeList) _symbol_global_list.value;
+					final Symbol _symbol_list = _symbols[offset + 2];
+					final NodeList list = (NodeList) _symbol_list.value;
+					 Iterator<Node> it = list.iterator(); while(it.hasNext()) global_list.add(it.next()); return global_list;
+				}
+			},
+			new Action() {	// [35] variable_declaration_list = variable_declaration.list
+				public Symbol reduce(Symbol[] _symbols, int offset) {
+					final Symbol _symbol_list = _symbols[offset + 1];
+					final NodeList list = (NodeList) _symbol_list.value;
+					 return list;
 				}
 			},
 			new Action() {	// [36] variable_declaration = identifier_list.list TOKEN_COLON type.type TOKEN_SEMIC
@@ -203,7 +219,9 @@ public class Parser extends beaver.Parser {
 					final IdentifierListSymbol list = (IdentifierListSymbol) _symbol_list.value;
 					final Symbol _symbol_type = _symbols[offset + 3];
 					final Type type = (Type) _symbol_type.value;
-					 for(String id : list.getList()) { typeEnvironment.add(id, new NodeId(id,type)); } return list;
+					 NodeList nodeList = new NodeList(); 
+															   for(String id : list.getList()) nodeList.add(new NodeId(id, type));	 
+															   return nodeList;
 				}
 			},
 			new Action() {	// [37] identifier_list = identifier_list.list TOKEN_COMMA TOKEN_IDENTIFIER.id
@@ -240,7 +258,8 @@ public class Parser extends beaver.Parser {
 					final TypeFunct decl = (TypeFunct) _symbol_decl.value;
 					final Symbol _symbol_def = _symbols[offset + 2];
 					final NodeList def = (NodeList) _symbol_def.value;
-					 funcEnv.add(decl.getName(), decl, def);
+					 System.out.println("CONTEXT : " + decl.getName()); funcEnv.add(decl.getName(), decl, def);
+															   stackEnv.closeCurrentScope();
 														   	   return decl;
 				}
 			},
@@ -248,7 +267,7 @@ public class Parser extends beaver.Parser {
 				public Symbol reduce(Symbol[] _symbols, int offset) {
 					final Symbol _symbol_decl = _symbols[offset + 1];
 					final TypeFunct decl = (TypeFunct) _symbol_decl.value;
-					 funcEnv.add(decl.getName(), decl);
+					 System.out.println("CONTEXT : " + decl.getName()); funcEnv.add(decl.getName(), decl);
 														   return decl;
 				}
 			},
@@ -288,30 +307,34 @@ public class Parser extends beaver.Parser {
 			},
 			new Action() {	// [49] argt_part = 
 				public Symbol reduce(Symbol[] _symbols, int offset) {
-					 return new TypeTuple();
+					 stackEnv.addNewScope(new NodeList(), false); return new TypeTuple();
 				}
 			},
 			new Action() {	// [50] argt_part = argt_list.list
 				public Symbol reduce(Symbol[] _symbols, int offset) {
 					final Symbol _symbol_list = _symbols[offset + 1];
-					final TypeTuple list = (TypeTuple) _symbol_list.value;
-					 return list;
+					final NodeList list = (NodeList) _symbol_list.value;
+					 stackEnv.addNewScope(list, false); // Registers identifiers.
+															   TypeTuple tuple = new TypeTuple(); // Creates the TypeList
+															   Iterator<Node> it = list.iterator();
+															   while(it.hasNext()) tuple.add(new TypeFeature("", ((NodeId)it.next()).getType()));
+															   return tuple;
 				}
 			},
-			new Action() {	// [51] argt_list = argt_list.list TOKEN_COMMA argt.arg
+			new Action() {	// [51] argt_list = argt_list.list TOKEN_COMMA argt.node
 				public Symbol reduce(Symbol[] _symbols, int offset) {
 					final Symbol _symbol_list = _symbols[offset + 1];
-					final TypeTuple list = (TypeTuple) _symbol_list.value;
-					final Symbol _symbol_arg = _symbols[offset + 3];
-					final NodeId arg = (NodeId) _symbol_arg.value;
-					 list.add(new TypeFeature("", arg.getType())); return list;
+					final NodeList list = (NodeList) _symbol_list.value;
+					final Symbol _symbol_node = _symbols[offset + 3];
+					final NodeId node = (NodeId) _symbol_node.value;
+					 list.add(node); return list;
 				}
 			},
-			new Action() {	// [52] argt_list = argt.arg
+			new Action() {	// [52] argt_list = argt.node
 				public Symbol reduce(Symbol[] _symbols, int offset) {
-					final Symbol _symbol_arg = _symbols[offset + 1];
-					final NodeId arg = (NodeId) _symbol_arg.value;
-					 return new TypeTuple(new TypeFeature("", arg.getType()));
+					final Symbol _symbol_node = _symbols[offset + 1];
+					final NodeId node = (NodeId) _symbol_node.value;
+					 return new NodeList(node);
 				}
 			},
 			new Action() {	// [53] argt = TOKEN_IDENTIFIER.id TOKEN_COLON type.t
@@ -320,7 +343,7 @@ public class Parser extends beaver.Parser {
 					final String id = (String) _symbol_id.value;
 					final Symbol _symbol_t = _symbols[offset + 3];
 					final Type t = (Type) _symbol_t.value;
-					 NodeId node = new NodeId(id, t); typeEnvironment.add(id, node); return node;
+					 return new NodeId(id, t);
 				}
 			},
 			new Action() {	// [54] block = variable_declaration_part TOKEN_BEGIN statement_list.stm TOKEN_END
@@ -493,7 +516,7 @@ public class Parser extends beaver.Parser {
 				public Symbol reduce(Symbol[] _symbols, int offset) {
 					final Symbol _symbol_id = _symbols[offset + 1];
 					final String id = (String) _symbol_id.value;
-					 return typeEnvironment.get(id);
+					 System.out.println("Asked for " + id + "."); return stackEnv.get(id);
 				}
 			},
 			new Action() {	// [92] variable_access = variable_access.id TOKEN_LBRACKET expression.exp TOKEN_RBRACKET

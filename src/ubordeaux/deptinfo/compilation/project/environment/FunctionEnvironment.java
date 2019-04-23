@@ -6,7 +6,7 @@ import java.util.Map;
 import ubordeaux.deptinfo.compilation.project.node.NodeList;
 import ubordeaux.deptinfo.compilation.project.type.TypeFunct;
 
-public class FuncEnvironment {
+public class FunctionEnvironment {
 	
 	public class Function {
 		public TypeFunct declaration;
@@ -20,7 +20,7 @@ public class FuncEnvironment {
 	
 	private Map<String, Function> functions;
 	
-	public FuncEnvironment() {
+	public FunctionEnvironment() {
 		functions = new HashMap<>();
 	}
 	

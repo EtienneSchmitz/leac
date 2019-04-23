@@ -16,13 +16,38 @@ public class Environment implements EnvironmentInt {
     }
     
     @Override
-    public void add(String key, Node node) {
-        map.put(key,node);
-        System.out.println(key +" registered");
+    public boolean add(String key, Node node) {
+        if(map.putIfAbsent(key,node) == null) {
+        	System.out.println(key +" registered in scope " + name + ".");
+        	return true;
+        } else {
+        	System.err.println("Unable to add add " + key + " in scope " + name + ".");
+        	return false;
+        }
     }
 
     @Override
     public Node get(String key) {
         return map.get(key);
+    }
+    
+	@Override
+	public void clear() {
+		map.clear();
+	}
+	
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+    public String getName() {
+    	return name;
+    }
+    
+    public void print() {
+    	System.out.println("========= SCOPE -> " + name);
+    	for(Map.Entry<String, Node> var : map.entrySet()) {
+    		System.out.println("===== " + var.getKey());
+    	}
     }
 }

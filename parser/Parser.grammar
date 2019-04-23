@@ -5,7 +5,7 @@
 %import "ubordeaux.deptinfo.compilation.project.node.*";
 %import "ubordeaux.deptinfo.compilation.project.type.*";
 %import "ubordeaux.deptinfo.compilation.project.environment.*";
-%import "ubordeaux.deptinfo.compilation.project.environment.FuncEnvironment.Function";
+%import "ubordeaux.deptinfo.compilation.project.environment.FunctionEnvironment.Function";
 %import "java.util.ArrayList";
 %import "java.util.Iterator";
 
@@ -30,8 +30,8 @@
     }
 
 	private Environment typeEnvironment = new Environment("types");
-	private FuncEnvironment funcEnv = new FuncEnvironment();
-	//private StackEnvironment stackEnvironment = new StackEnvironment("local variables stack");
+	private FunctionEnvironment funcEnv = new FunctionEnvironment();
+	private StackEnvironment stackEnv = new StackEnvironment();
 	private String type_declaration_name;
 :};
 
@@ -72,6 +72,7 @@
 
 // Types
 %typeof block = "NodeList";
+%typeof variable_declaration, variable_declaration_list, variable_declaration_part = "NodeList";
 %typeof expression_part = "NodeList";
 %typeof expression_list = "NodeList";
 %typeof expression = "NodeExp";
@@ -95,7 +96,7 @@
 %typeof procedure_declaration_head = "TypeFunct";
 %typeof procedure_head = "TypeFunct";
 %typeof argt_part = "TypeTuple";
-%typeof argt_list = "TypeTuple";
+%typeof argt_list = "NodeList";
 %typeof argt = "NodeId";
 %typeof procedure_expression = "NodeCallFct";
 %typeof subrange_type = "TypeArrayRange";
@@ -132,7 +133,7 @@ program=
 	procedure_definition_part
 	TOKEN_BEGIN
 	statement_list.stm
-	TOKEN_END               {: return stm; :}
+	TOKEN_END               {: stackEnv.closeCurrentScope(); return stm; :}
 	;
 
 type_declaration_part=
@@ -217,17 +218,19 @@ feature_type=
 	;
 
 variable_declaration_part=
-	/* empty */
-	| TOKEN_VAR variable_declaration_list
+	/* empty */																{: NodeList list = new NodeList(); stackEnv.addToCurrentScope(list); return list;:}
+	| TOKEN_VAR variable_declaration_list.list								{: stackEnv.addToCurrentScope(list); return list; :}
 	;
 
 variable_declaration_list=
-	variable_declaration_list variable_declaration
-	| variable_declaration
+	variable_declaration_list.global_list variable_declaration.list			{: Iterator<Node> it = list.iterator(); while(it.hasNext()) global_list.add(it.next()); return global_list; :}
+	| variable_declaration.list												{: return list; :}
 	;
 
 variable_declaration=
-	identifier_list.list TOKEN_COLON type.type TOKEN_SEMIC {: for(String id : list.getList()) { typeEnvironment.add(id, new NodeId(id,type)); } return list; :}
+	identifier_list.list TOKEN_COLON type.type TOKEN_SEMIC 	{: NodeList nodeList = new NodeList(); 
+															   for(String id : list.getList()) nodeList.add(new NodeId(id, type));	 
+															   return nodeList; :}
 	;
 
 identifier_list=
@@ -245,9 +248,10 @@ procedure_definition_list=
 	;
 
 procedure_definition=
-	procedure_definition_head.decl block.def				{: funcEnv.add(decl.getName(), decl, def);
+	procedure_definition_head.decl block.def				{: System.out.println("CONTEXT : " + decl.getName()); funcEnv.add(decl.getName(), decl, def);
+															   stackEnv.closeCurrentScope();
 														   	   return decl; :}
-	| procedure_declaration_head.decl TOKEN_SEMIC		{: funcEnv.add(decl.getName(), decl);
+	| procedure_declaration_head.decl TOKEN_SEMIC		{: System.out.println("CONTEXT : " + decl.getName()); funcEnv.add(decl.getName(), decl);
 														   return decl; :}
 	;
 
@@ -265,17 +269,21 @@ procedure_head=
 	;
 
 argt_part=
-	/* empty */												{: return new TypeTuple();				:}
-	| argt_list.list										{: return list; 						:}
+	/* empty */												{: stackEnv.addNewScope(new NodeList(), false); return new TypeTuple(); :}
+	| argt_list.list										{: stackEnv.addNewScope(list, false); // Registers identifiers.
+															   TypeTuple tuple = new TypeTuple(); // Creates the TypeList
+															   Iterator<Node> it = list.iterator();
+															   while(it.hasNext()) tuple.add(new TypeFeature("", ((NodeId)it.next()).getType()));
+															   return tuple; :}
 	;
 
 argt_list=
-	argt_list.list TOKEN_COMMA argt.arg						{: list.add(new TypeFeature("", arg.getType())); return list;	:}						
-	| argt.arg												{: return new TypeTuple(new TypeFeature("", arg.getType())); 	:}					
+	argt_list.list TOKEN_COMMA argt.node					{: list.add(node); return list;	:}						
+	| argt.node												{: return new NodeList(node);   :}					
 	;
 
 argt=
-	TOKEN_IDENTIFIER.id TOKEN_COLON type.t					{: NodeId node = new NodeId(id, t); typeEnvironment.add(id, node); return node; :}
+	TOKEN_IDENTIFIER.id TOKEN_COLON type.t					{: return new NodeId(id, t); :}
 	;
 
 block=
@@ -383,7 +391,7 @@ case_default=
 	; // Change
 
 variable_access=
-	TOKEN_IDENTIFIER.id                                            {: return typeEnvironment.get(id); :}
+	TOKEN_IDENTIFIER.id                                            {: System.out.println("Asked for " + id + "."); return stackEnv.get(id); :}
 	| variable_access.id TOKEN_LBRACKET expression.exp TOKEN_RBRACKET {: return new NodeArrayAccess(id,exp); :}
 	| expression TOKEN_CIRC
 	;

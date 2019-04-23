@@ -31,4 +31,7 @@ public final class NodeId extends NodeExp {
 		return new NodeId(name, type);
 	}
 
+	public String getName() {
+		return name;
+	}
 }
