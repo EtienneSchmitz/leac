@@ -74,12 +74,6 @@ public class Parser extends beaver.Parser {
 		}
 	};
 
-	static final Action RETURN6 = new Action() {
-		public Symbol reduce(Symbol[] _symbols, int offset) {
-			return _symbols[offset + 6];
-		}
-	};
-
 	static class Events extends beaver.Parser.Events {
 		public void syntaxError(Symbol token) {
 			System.err.format("*** Erreur de syntaxe en ligne %d, colonne %d. Token inattendu: %s\n",
@@ -156,9 +150,25 @@ public class Parser extends beaver.Parser {
 			Action.RETURN,	// [18] index_type = subrange_type
 			RETURN4,	// [19] enumerated_type = init_enumerated_type TOKEN_LPAR identifier_list TOKEN_RPAR; returns 'TOKEN_RPAR' although none is marked
 			Action.NONE,  	// [20] init_enumerated_type = 
-			RETURN3,	// [21] subrange_type = TOKEN_LIT_INTEGER TOKEN_DOTDOT TOKEN_LIT_INTEGER; returns 'TOKEN_LIT_INTEGER' although none is marked
+			new Action() {	// [21] subrange_type = TOKEN_LIT_INTEGER.int1 TOKEN_DOTDOT TOKEN_LIT_INTEGER.int2
+				public Symbol reduce(Symbol[] _symbols, int offset) {
+					final Symbol _symbol_int1 = _symbols[offset + 1];
+					final Integer int1 = (Integer) _symbol_int1.value;
+					final Symbol _symbol_int2 = _symbols[offset + 3];
+					final Integer int2 = (Integer) _symbol_int2.value;
+					 return new TypeArrayRange(new TypeInt(int1),new TypeInt(int2));
+				}
+			},
 			RETURN3,	// [22] subrange_type = TOKEN_IDENTIFIER TOKEN_DOTDOT TOKEN_IDENTIFIER; returns 'TOKEN_IDENTIFIER' although none is marked
-			RETURN6,	// [23] array_type = TOKEN_ARRAY TOKEN_LBRACKET range_type TOKEN_RBRACKET TOKEN_OF type; returns 'type' although none is marked
+			new Action() {	// [23] array_type = TOKEN_ARRAY TOKEN_LBRACKET range_type.rangetype TOKEN_RBRACKET TOKEN_OF type.type
+				public Symbol reduce(Symbol[] _symbols, int offset) {
+					final Symbol _symbol_rangetype = _symbols[offset + 3];
+					final TypeRange rangetype = (TypeRange) _symbol_rangetype.value;
+					final Symbol _symbol_type = _symbols[offset + 6];
+					final Type type = (Type) _symbol_type.value;
+					 return new TypeArray(rangetype,type);
+				}
+			},
 			Action.RETURN,	// [24] range_type = enumerated_type
 			Action.RETURN,	// [25] range_type = subrange_type
 			Action.RETURN,	// [26] range_type = named_type
@@ -486,7 +496,15 @@ public class Parser extends beaver.Parser {
 					 return typeEnvironment.get(id);
 				}
 			},
-			RETURN4,	// [92] variable_access = variable_access TOKEN_LBRACKET expression TOKEN_RBRACKET; returns 'TOKEN_RBRACKET' although none is marked
+			new Action() {	// [92] variable_access = variable_access.id TOKEN_LBRACKET expression.exp TOKEN_RBRACKET
+				public Symbol reduce(Symbol[] _symbols, int offset) {
+					final Symbol _symbol_id = _symbols[offset + 1];
+					final NodeExp id = (NodeExp) _symbol_id.value;
+					final Symbol _symbol_exp = _symbols[offset + 3];
+					final NodeExp exp = (NodeExp) _symbol_exp.value;
+					 return new NodeArrayAccess(id,exp);
+				}
+			},
 			RETURN2,	// [93] variable_access = expression TOKEN_CIRC; returns 'TOKEN_CIRC' although none is marked
 			new Action() {	// [94] expression = expression.e1 TOKEN_PLUS expression.e2
 				public Symbol reduce(Symbol[] _symbols, int offset) {
@@ -553,7 +571,7 @@ public class Parser extends beaver.Parser {
 				public Symbol reduce(Symbol[] _symbols, int offset) {
 					final Symbol _symbol_e = _symbols[offset + 2];
 					final NodeExp e = (NodeExp) _symbol_e.value;
-					 debug(e); return new NodeRel("not", e);
+					 return new NodeRel("not", e);
 				}
 			},
 			new Action() {	// [102] expression = expression.e1 TOKEN_LT expression.e2

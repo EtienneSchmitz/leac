@@ -17,8 +17,10 @@ public final class NodeList extends Node {
 		super.checksType();
 		boolean result = true;
 		for (Node elt : this.elts) {
-			if (elt != null && !elt.checksType())
+			if (elt != null && !elt.checksType()) {
 				result = false;
+				break;
+			}
 		}
 		return result;
 	}

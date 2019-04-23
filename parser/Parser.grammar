@@ -98,6 +98,10 @@
 %typeof argt_list = "TypeTuple";
 %typeof argt = "NodeId";
 %typeof procedure_expression = "NodeCallFct";
+%typeof subrange_type = "TypeArrayRange";
+%typeof array_type = "TypeArray";
+%typeof range_type = "TypeRange";
+
 %goal program;
 
 /***
@@ -181,12 +185,12 @@ init_enumerated_type=
 	;
 
 subrange_type=
-	TOKEN_LIT_INTEGER TOKEN_DOTDOT TOKEN_LIT_INTEGER
+	TOKEN_LIT_INTEGER.int1 TOKEN_DOTDOT TOKEN_LIT_INTEGER.int2  {: return new TypeArrayRange(new TypeInt(int1),new TypeInt(int2)); :}
 	| TOKEN_IDENTIFIER TOKEN_DOTDOT TOKEN_IDENTIFIER
 	;
 
 array_type=
-	TOKEN_ARRAY TOKEN_LBRACKET range_type TOKEN_RBRACKET TOKEN_OF type
+	TOKEN_ARRAY TOKEN_LBRACKET range_type.rangetype TOKEN_RBRACKET TOKEN_OF type.type {: return new TypeArray(rangetype,type); :}
 	;
 
 range_type=
@@ -380,7 +384,7 @@ case_default=
 
 variable_access=
 	TOKEN_IDENTIFIER.id                                            {: return typeEnvironment.get(id); :}
-	| variable_access TOKEN_LBRACKET expression TOKEN_RBRACKET
+	| variable_access.id TOKEN_LBRACKET expression.exp TOKEN_RBRACKET {: return new NodeArrayAccess(id,exp); :}
 	| expression TOKEN_CIRC
 	;
 
@@ -392,7 +396,7 @@ expression=
 	| TOKEN_MINUS expression.e  @PRIORMAX                           {: return new NodeOp("minus",e); :}
 	| expression.e1 TOKEN_OR expression.e2							{: return new NodeRel("or", e1, e2); :}
 	| expression.e1 TOKEN_AND expression.e2							{: return new NodeRel("and", e1, e2); :}
-	| TOKEN_NOT expression.e                                        {: debug(e); return new NodeRel("not", e); :}
+	| TOKEN_NOT expression.e                                        {: return new NodeRel("not", e); :}
 	| expression.e1 TOKEN_LT expression.e2							{: return new NodeRel("lesser_than", e1, e2); :}
 	| expression.e1 TOKEN_LE expression.e2							{: return new NodeRel("lesser_or_equal", e1, e2); :}
 	| expression.e1 TOKEN_GT expression.e2							{: return new NodeRel("greater_than", e1, e2); :}

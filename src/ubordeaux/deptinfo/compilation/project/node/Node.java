@@ -1,11 +1,12 @@
 package ubordeaux.deptinfo.compilation.project.node;
 
+import ubordeaux.deptinfo.compilation.project.main.ClonableSymbol;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import ubordeaux.deptinfo.compilation.project.main.ClonableSymbol;
 
 public abstract class Node extends ClonableSymbol implements NodeInterface {
 
@@ -18,6 +19,7 @@ public abstract class Node extends ClonableSymbol implements NodeInterface {
 		this.uniqId = Node.staticUniqId++;
 		//System.err.println("Create class " + this.getClass().getSimpleName());
 		this.elts = new ArrayList<Node>();
+		
 	}
 
 	public Node(Node ... args) {

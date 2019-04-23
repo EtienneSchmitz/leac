@@ -109,22 +109,16 @@ j registered
 --> TOKEN_LIT_INTEGER : 5
 --> TOKEN_RPAR : )
 --> TOKEN_SEMIC : ;
---> TOKEN_PRINTLN : println
---> TOKEN_IDENTIFIER : sum
---> TOKEN_LPAR : (
---> TOKEN_LIT_INTEGER : 3
---> TOKEN_COMMA : ,
---> TOKEN_LIT_INTEGER : 5
---> TOKEN_RPAR : )
---> TOKEN_SEMIC : ;
---> TOKEN_PRINTLN : println
---> TOKEN_LPAR : (
---> TOKEN_IDENTIFIER : pgcd
---> TOKEN_LPAR : (
---> TOKEN_LIT_INTEGER : 78
---> TOKEN_COMMA : ,
---> TOKEN_LIT_INTEGER : 90
---> TOKEN_RPAR : )
---> TOKEN_RPAR : )
---> TOKEN_SEMIC : ;
 --> TOKEN_END : end
+NodeList(NodeAssign(NodeId#x:TypeInt_null#, NodeLiteral#5:TypeInt_5#), NodeAssign(NodeId#x:TypeInt_null#, sum_NodeCallFct(NodeList(NodeLiteral#3:TypeInt_3#, NodeLiteral#5:TypeInt_5#))))
+*** Analyse syntaxique ok
+--- CheckType NodeList
+--- CheckType NodeAssign
+--- CheckType NodeId
+--- CheckType NodeLiteral
+--- CheckType NodeAssign
+--- CheckType NodeId
+--- CheckType NodeCallFct
+--- CheckType NodeLiteral
+--- CheckType NodeLiteral
+*** Typage correct
