@@ -1,49 +1,130 @@
-*** Fichier data/progrTest.lea
+*** Fichier data/progr5.lea
 --> TOKEN_VAR : var
---> TOKEN_IDENTIFIER : d
+--> TOKEN_IDENTIFIER : x
+--> TOKEN_COLON : :
+--> TOKEN_INTEGER : integer
+--> TOKEN_SEMIC : ;
+--> TOKEN_FUNCTION : function
+x registered
+--> TOKEN_IDENTIFIER : sum
+--> TOKEN_LPAR : (
+--> TOKEN_IDENTIFIER : i
+--> TOKEN_COLON : :
+--> TOKEN_INTEGER : integer
 --> TOKEN_COMMA : ,
---> TOKEN_IDENTIFIER : b
+i registered
+--> TOKEN_IDENTIFIER : j
+--> TOKEN_COLON : :
+--> TOKEN_INTEGER : integer
+--> TOKEN_RPAR : )
+j registered
+--> TOKEN_COLON : :
+--> TOKEN_INTEGER : integer
+--> TOKEN_VAR : var
+--> TOKEN_IDENTIFIER : k
 --> TOKEN_COLON : :
 --> TOKEN_INTEGER : integer
 --> TOKEN_SEMIC : ;
 --> TOKEN_BEGIN : begin
-d registered
-b registered
---> TOKEN_IDENTIFIER : d
---> TOKEN_AFF : =
---> TOKEN_LIT_INTEGER : 400
---> TOKEN_SEMIC : ;
---> TOKEN_IDENTIFIER : b
---> TOKEN_AFF : =
---> TOKEN_LIT_INTEGER : 20
---> TOKEN_SEMIC : ;
---> TOKEN_IF : if
+k registered
+--> TOKEN_RETURN : return
 --> TOKEN_LPAR : (
---> TOKEN_NOT : !
---> TOKEN_IDENTIFIER : d
---> TOKEN_EQ : ==
-NodeId#d:TypeInt_null#
---> TOKEN_LIT_INTEGER : 400
+--> TOKEN_IDENTIFIER : i
+--> TOKEN_PLUS : +
+--> TOKEN_IDENTIFIER : j
 --> TOKEN_RPAR : )
---> TOKEN_THEN : then
---> TOKEN_IDENTIFIER : d
---> TOKEN_AFF : =
---> TOKEN_LIT_INTEGER : 4
---> TOKEN_SEMIC : ;
---> TOKEN_ELSE : else
---> TOKEN_IDENTIFIER : d
---> TOKEN_AFF : =
---> TOKEN_LIT_INTEGER : 6
 --> TOKEN_SEMIC : ;
 --> TOKEN_END : end
-NodeList(NodeAssign(NodeId#d:TypeInt_null#, NodeLiteral#400:TypeInt_400#), NodeAssign(NodeId#b:TypeInt_null#, NodeLiteral#20:TypeInt_20#), NodeIf(NodeRel(NodeRel(NodeId#d:TypeInt_null#), NodeLiteral#400:TypeInt_400#), NodeAssign(NodeId#d:TypeInt_null#, NodeLiteral#4:TypeInt_4#), NodeAssign(NodeId#d:TypeInt_null#, NodeLiteral#6:TypeInt_6#)))
-*** Analyse syntaxique ok
---- CheckType NodeList
---- CheckType NodeAssign
---- CheckType NodeId
---- CheckType NodeLiteral
---- CheckType NodeAssign
---- CheckType NodeId
---- CheckType NodeLiteral
---- CheckType NodeIf
-*** Typage correct
+--> TOKEN_FUNCTION : function
+--> TOKEN_IDENTIFIER : pgcd
+--> TOKEN_LPAR : (
+--> TOKEN_IDENTIFIER : i
+--> TOKEN_COLON : :
+--> TOKEN_INTEGER : integer
+--> TOKEN_COMMA : ,
+i registered
+--> TOKEN_IDENTIFIER : j
+--> TOKEN_COLON : :
+--> TOKEN_INTEGER : integer
+--> TOKEN_RPAR : )
+j registered
+--> TOKEN_COLON : :
+--> TOKEN_INTEGER : integer
+--> TOKEN_BEGIN : begin
+--> TOKEN_WHILE : while
+--> TOKEN_LPAR : (
+--> TOKEN_IDENTIFIER : i
+--> TOKEN_NE : !=
+--> TOKEN_IDENTIFIER : j
+--> TOKEN_RPAR : )
+--> TOKEN_DO : do
+--> TOKEN_IF : if
+--> TOKEN_LPAR : (
+--> TOKEN_IDENTIFIER : i
+--> TOKEN_GT : >
+--> TOKEN_IDENTIFIER : j
+--> TOKEN_RPAR : )
+--> TOKEN_THEN : then
+--> TOKEN_IDENTIFIER : i
+--> TOKEN_AFF : =
+--> TOKEN_IDENTIFIER : i
+--> TOKEN_MINUS : -
+--> TOKEN_IDENTIFIER : j
+--> TOKEN_SEMIC : ;
+--> TOKEN_ELSE : else
+--> TOKEN_IDENTIFIER : j
+--> TOKEN_AFF : =
+--> TOKEN_IDENTIFIER : j
+--> TOKEN_MINUS : -
+--> TOKEN_IDENTIFIER : i
+--> TOKEN_SEMIC : ;
+--> TOKEN_RETURN : return
+--> TOKEN_LPAR : (
+--> TOKEN_IDENTIFIER : i
+--> TOKEN_RPAR : )
+--> TOKEN_SEMIC : ;
+--> TOKEN_END : end
+--> TOKEN_FUNCTION : function
+--> TOKEN_IDENTIFIER : foo
+--> TOKEN_LPAR : (
+--> TOKEN_RPAR : )
+--> TOKEN_COLON : :
+--> TOKEN_INTEGER : integer
+--> TOKEN_BEGIN : begin
+--> TOKEN_RETURN : return
+--> TOKEN_LIT_INTEGER : 1
+--> TOKEN_SEMIC : ;
+--> TOKEN_END : end
+--> TOKEN_BEGIN : begin
+--> TOKEN_IDENTIFIER : x
+--> TOKEN_AFF : =
+--> TOKEN_LIT_INTEGER : 5
+--> TOKEN_SEMIC : ;
+--> TOKEN_IDENTIFIER : x
+--> TOKEN_AFF : =
+--> TOKEN_IDENTIFIER : sum
+--> TOKEN_LPAR : (
+--> TOKEN_LIT_INTEGER : 3
+--> TOKEN_COMMA : ,
+--> TOKEN_LIT_INTEGER : 5
+--> TOKEN_RPAR : )
+--> TOKEN_SEMIC : ;
+--> TOKEN_PRINTLN : println
+--> TOKEN_IDENTIFIER : sum
+--> TOKEN_LPAR : (
+--> TOKEN_LIT_INTEGER : 3
+--> TOKEN_COMMA : ,
+--> TOKEN_LIT_INTEGER : 5
+--> TOKEN_RPAR : )
+--> TOKEN_SEMIC : ;
+--> TOKEN_PRINTLN : println
+--> TOKEN_LPAR : (
+--> TOKEN_IDENTIFIER : pgcd
+--> TOKEN_LPAR : (
+--> TOKEN_LIT_INTEGER : 78
+--> TOKEN_COMMA : ,
+--> TOKEN_LIT_INTEGER : 90
+--> TOKEN_RPAR : )
+--> TOKEN_RPAR : )
+--> TOKEN_SEMIC : ;
+--> TOKEN_END : end

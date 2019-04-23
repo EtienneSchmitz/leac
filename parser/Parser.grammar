@@ -5,6 +5,7 @@
 %import "ubordeaux.deptinfo.compilation.project.node.*";
 %import "ubordeaux.deptinfo.compilation.project.type.*";
 %import "ubordeaux.deptinfo.compilation.project.environment.*";
+%import "ubordeaux.deptinfo.compilation.project.environment.FuncEnvironment.Function";
 %import "java.util.ArrayList";
 %import "java.util.Iterator";
 
@@ -22,15 +23,15 @@
 			System.err.format("*** " + msg + " ligne %d, colonne %d\n",
 				Symbol.getLine(token.getStart()),
 				Symbol.getColumn(token.getStart()));
-		}
+	}
 
 	public void debug(Object msg) {
         System.out.println(msg);
     }
 
 	private Environment typeEnvironment = new Environment("types");
-	// private Environment procedureEnvironment = new Environment("procedures");
-	// private StackEnvironment stackEnvironment = new StackEnvironment("local variables stack");
+	private FuncEnvironment funcEnv = new FuncEnvironment();
+	//private StackEnvironment stackEnvironment = new StackEnvironment("local variables stack");
 	private String type_declaration_name;
 :};
 
@@ -70,8 +71,12 @@
 %left TOKEN_IF;
 
 // Types
+%typeof block = "NodeList";
+%typeof expression_part = "NodeList";
+%typeof expression_list = "NodeList";
+%typeof expression = "NodeExp";
 %typeof statement_list = "NodeList";
-%typeof variable_access, expression = "NodeExp";
+%typeof variable_access = "NodeExp";
 %typeof statement = "Node";
 %typeof type = "Type";
 %typeof assignment_statement = "NodeAssign";
@@ -85,12 +90,14 @@
 %typeof case_statement_list = "NodeList";
 %typeof case_statement = "NodeCaseList";
 %typeof case_default = "NodeCase";
+%typeof procedure_definition = "TypeFunct";
 %typeof procedure_definition_head = "TypeFunct";
 %typeof procedure_declaration_head = "TypeFunct";
 %typeof procedure_head = "TypeFunct";
 %typeof argt_part = "TypeTuple";
 %typeof argt_list = "TypeTuple";
 %typeof argt = "NodeId";
+%typeof procedure_expression = "NodeCallFct";
 %goal program;
 
 /***
@@ -234,8 +241,10 @@ procedure_definition_list=
 	;
 
 procedure_definition=
-	procedure_definition_head block
-	| procedure_declaration_head TOKEN_SEMIC
+	procedure_definition_head.decl block.def				{: funcEnv.add(decl.getName(), decl, def);
+														   	   return decl; :}
+	| procedure_declaration_head.decl TOKEN_SEMIC		{: funcEnv.add(decl.getName(), decl);
+														   return decl; :}
 	;
 
 procedure_definition_head=
@@ -247,8 +256,8 @@ procedure_declaration_head=
 	;
 
 procedure_head=
-	TOKEN_PROCEDURE TOKEN_IDENTIFIER.id TOKEN_LPAR argt_part.args TOKEN_RPAR								{: return TypeFunct(id, args, null);		:}
-	| TOKEN_FUNCTION TOKEN_IDENTIFIER.id TOKEN_LPAR argt_part.args TOKEN_RPAR TOKEN_COLON type.ret_type		{: return TypeFunct(id, args, ret_type);	:}
+	TOKEN_PROCEDURE TOKEN_IDENTIFIER.id TOKEN_LPAR argt_part.args TOKEN_RPAR								{: return new TypeFunct(id, args, new TypeVoid());		:}
+	| TOKEN_FUNCTION TOKEN_IDENTIFIER.id TOKEN_LPAR argt_part.args TOKEN_RPAR TOKEN_COLON type.ret_type		{: return new TypeFunct(id, args, ret_type);			:}
 	;
 
 argt_part=
@@ -257,12 +266,12 @@ argt_part=
 	;
 
 argt_list=
-	argt_list.list TOKEN_COMMA argt.arg						{: return list.add(arg.getType()); 		:}						
-	| argt.arg												{: return new TypeTuple(arg.getType()); :}					
+	argt_list.list TOKEN_COMMA argt.arg						{: list.add(new TypeFeature("", arg.getType())); return list;	:}						
+	| argt.arg												{: return new TypeTuple(new TypeFeature("", arg.getType())); 	:}					
 	;
 
 argt=
-	TOKEN_IDENTIFIER.id TOKEN_COLON type.t					{: return new NodeId(id, t):}
+	TOKEN_IDENTIFIER.id TOKEN_COLON type.t					{: NodeId node = new NodeId(id, t); typeEnvironment.add(id, node); return node; :}
 	;
 
 block=
@@ -301,17 +310,18 @@ procedure_statement=
 	;
 
 procedure_expression=
-	TOKEN_IDENTIFIER TOKEN_LPAR expression_part TOKEN_RPAR
+	TOKEN_IDENTIFIER.id TOKEN_LPAR expression_part.args TOKEN_RPAR			{: TypeFunct decl = funcEnv.get(id).declaration;
+																			   return new NodeCallFct(id, decl, args); :}
 	;
 
 expression_part=
-	/* empty */
-	| expression_list
+	/* empty */											{: return new NodeList(); :}
+	| expression_list.list								{: return list; :}
 	;
 
 expression_list=
-	expression_list TOKEN_COMMA expression
-	| expression
+	expression_list.list TOKEN_COMMA expression.e	{: list.add(e); return list; :}
+	| expression.e									{: return new NodeList(e); :}
 	;
 
 new_statement=
@@ -390,7 +400,7 @@ expression=
 	| expression.e1 TOKEN_EQ expression.e2							{: return new NodeRel("equal", e1, e2); :}
 	| expression.e1 TOKEN_NE expression.e2							{: return new NodeRel("not_equal", e1, e2); :}
 	| TOKEN_LPAR expression.e TOKEN_RPAR                            {: return e; :}
-	| procedure_expression
+	| procedure_expression.funcCall									{: return funcCall; :}
 	| variable_access
 	| literal
 	;

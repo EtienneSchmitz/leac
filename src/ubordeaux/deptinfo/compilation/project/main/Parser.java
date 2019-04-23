@@ -1,6 +1,7 @@
 package ubordeaux.deptinfo.compilation.project.main;
 
 import java.util.Iterator;
+import ubordeaux.deptinfo.compilation.project.environment.FuncEnvironment.Function;
 import ubordeaux.deptinfo.compilation.project.environment.*;
 import ubordeaux.deptinfo.compilation.project.type.*;
 import beaver.*;
@@ -79,18 +80,6 @@ public class Parser extends beaver.Parser {
 		}
 	};
 
-	static final Action RETURN5 = new Action() {
-		public Symbol reduce(Symbol[] _symbols, int offset) {
-			return _symbols[offset + 5];
-		}
-	};
-
-	static final Action RETURN7 = new Action() {
-		public Symbol reduce(Symbol[] _symbols, int offset) {
-			return _symbols[offset + 7];
-		}
-	};
-
 	static class Events extends beaver.Parser.Events {
 		public void syntaxError(Symbol token) {
 			System.err.format("*** Erreur de syntaxe en ligne %d, colonne %d. Token inattendu: %s\n",
@@ -104,15 +93,15 @@ public class Parser extends beaver.Parser {
 			System.err.format("*** " + msg + " ligne %d, colonne %d\n",
 				Symbol.getLine(token.getStart()),
 				Symbol.getColumn(token.getStart()));
-		}
+	}
 
 	public void debug(Object msg) {
         System.out.println(msg);
     }
 
 	private Environment typeEnvironment = new Environment("types");
-	// private Environment procedureEnvironment = new Environment("procedures");
-	// private StackEnvironment stackEnvironment = new StackEnvironment("local variables stack");
+	private FuncEnvironment funcEnv = new FuncEnvironment();
+	//private StackEnvironment stackEnvironment = new StackEnvironment("local variables stack");
 	private String type_declaration_name;
 
 	private final Action[] actions;
@@ -227,33 +216,103 @@ public class Parser extends beaver.Parser {
 			Action.RETURN,	// [40] procedure_definition_part = procedure_definition_list
 			new Action() {	// [41] procedure_definition_list = procedure_definition_list procedure_definition
 				public Symbol reduce(Symbol[] _symbols, int offset) {
-					((ArrayList) _symbols[offset + 1].value).add(_symbols[offset + 2]); return _symbols[offset + 1];
+					((ArrayList) _symbols[offset + 1].value).add(_symbols[offset + 2].value); return _symbols[offset + 1];
 				}
 			},
 			new Action() {	// [42] procedure_definition_list = procedure_definition
 				public Symbol reduce(Symbol[] _symbols, int offset) {
-					ArrayList lst = new ArrayList(); lst.add(_symbols[offset + 1]); return new Symbol(lst);
+					ArrayList lst = new ArrayList(); lst.add(_symbols[offset + 1].value); return new Symbol(lst);
 				}
 			},
-			RETURN2,	// [43] procedure_definition = procedure_definition_head block; returns 'block' although none is marked
-			RETURN2,	// [44] procedure_definition = procedure_declaration_head TOKEN_SEMIC; returns 'TOKEN_SEMIC' although none is marked
-			Action.RETURN,	// [45] procedure_definition_head = procedure_head
-			Action.RETURN,	// [46] procedure_declaration_head = procedure_head
-			RETURN5,	// [47] procedure_head = TOKEN_PROCEDURE TOKEN_IDENTIFIER TOKEN_LPAR argt_part TOKEN_RPAR; returns 'TOKEN_RPAR' although none is marked
-			RETURN7,	// [48] procedure_head = TOKEN_FUNCTION TOKEN_IDENTIFIER TOKEN_LPAR argt_part TOKEN_RPAR TOKEN_COLON type; returns 'type' although none is marked
-			Action.NONE,  	// [49] argt_part = 
-			Action.RETURN,	// [50] argt_part = argt_list
-			new Action() {	// [51] argt_list = argt_list TOKEN_COMMA argt
+			new Action() {	// [43] procedure_definition = procedure_definition_head.decl block.def
 				public Symbol reduce(Symbol[] _symbols, int offset) {
-					((ArrayList) _symbols[offset + 1].value).add(_symbols[offset + 3]); return _symbols[offset + 1];
+					final Symbol _symbol_decl = _symbols[offset + 1];
+					final TypeFunct decl = (TypeFunct) _symbol_decl.value;
+					final Symbol _symbol_def = _symbols[offset + 2];
+					final NodeList def = (NodeList) _symbol_def.value;
+					 funcEnv.add(decl.getName(), decl, def);
+														   	   return decl;
 				}
 			},
-			new Action() {	// [52] argt_list = argt
+			new Action() {	// [44] procedure_definition = procedure_declaration_head.decl TOKEN_SEMIC
 				public Symbol reduce(Symbol[] _symbols, int offset) {
-					ArrayList lst = new ArrayList(); lst.add(_symbols[offset + 1]); return new Symbol(lst);
+					final Symbol _symbol_decl = _symbols[offset + 1];
+					final TypeFunct decl = (TypeFunct) _symbol_decl.value;
+					 funcEnv.add(decl.getName(), decl);
+														   return decl;
 				}
 			},
-			RETURN3,	// [53] argt = TOKEN_IDENTIFIER TOKEN_COLON type; returns 'type' although none is marked
+			new Action() {	// [45] procedure_definition_head = procedure_head.funct
+				public Symbol reduce(Symbol[] _symbols, int offset) {
+					final Symbol _symbol_funct = _symbols[offset + 1];
+					final TypeFunct funct = (TypeFunct) _symbol_funct.value;
+					 return funct;
+				}
+			},
+			new Action() {	// [46] procedure_declaration_head = procedure_head.funct
+				public Symbol reduce(Symbol[] _symbols, int offset) {
+					final Symbol _symbol_funct = _symbols[offset + 1];
+					final TypeFunct funct = (TypeFunct) _symbol_funct.value;
+					 return funct;
+				}
+			},
+			new Action() {	// [47] procedure_head = TOKEN_PROCEDURE TOKEN_IDENTIFIER.id TOKEN_LPAR argt_part.args TOKEN_RPAR
+				public Symbol reduce(Symbol[] _symbols, int offset) {
+					final Symbol _symbol_id = _symbols[offset + 2];
+					final String id = (String) _symbol_id.value;
+					final Symbol _symbol_args = _symbols[offset + 4];
+					final TypeTuple args = (TypeTuple) _symbol_args.value;
+					 return new TypeFunct(id, args, new TypeVoid());
+				}
+			},
+			new Action() {	// [48] procedure_head = TOKEN_FUNCTION TOKEN_IDENTIFIER.id TOKEN_LPAR argt_part.args TOKEN_RPAR TOKEN_COLON type.ret_type
+				public Symbol reduce(Symbol[] _symbols, int offset) {
+					final Symbol _symbol_id = _symbols[offset + 2];
+					final String id = (String) _symbol_id.value;
+					final Symbol _symbol_args = _symbols[offset + 4];
+					final TypeTuple args = (TypeTuple) _symbol_args.value;
+					final Symbol _symbol_ret_type = _symbols[offset + 7];
+					final Type ret_type = (Type) _symbol_ret_type.value;
+					 return new TypeFunct(id, args, ret_type);
+				}
+			},
+			new Action() {	// [49] argt_part = 
+				public Symbol reduce(Symbol[] _symbols, int offset) {
+					 return new TypeTuple();
+				}
+			},
+			new Action() {	// [50] argt_part = argt_list.list
+				public Symbol reduce(Symbol[] _symbols, int offset) {
+					final Symbol _symbol_list = _symbols[offset + 1];
+					final TypeTuple list = (TypeTuple) _symbol_list.value;
+					 return list;
+				}
+			},
+			new Action() {	// [51] argt_list = argt_list.list TOKEN_COMMA argt.arg
+				public Symbol reduce(Symbol[] _symbols, int offset) {
+					final Symbol _symbol_list = _symbols[offset + 1];
+					final TypeTuple list = (TypeTuple) _symbol_list.value;
+					final Symbol _symbol_arg = _symbols[offset + 3];
+					final NodeId arg = (NodeId) _symbol_arg.value;
+					 list.add(new TypeFeature("", arg.getType())); return list;
+				}
+			},
+			new Action() {	// [52] argt_list = argt.arg
+				public Symbol reduce(Symbol[] _symbols, int offset) {
+					final Symbol _symbol_arg = _symbols[offset + 1];
+					final NodeId arg = (NodeId) _symbol_arg.value;
+					 return new TypeTuple(new TypeFeature("", arg.getType()));
+				}
+			},
+			new Action() {	// [53] argt = TOKEN_IDENTIFIER.id TOKEN_COLON type.t
+				public Symbol reduce(Symbol[] _symbols, int offset) {
+					final Symbol _symbol_id = _symbols[offset + 1];
+					final String id = (String) _symbol_id.value;
+					final Symbol _symbol_t = _symbols[offset + 3];
+					final Type t = (Type) _symbol_t.value;
+					 NodeId node = new NodeId(id, t); typeEnvironment.add(id, node); return node;
+				}
+			},
 			new Action() {	// [54] block = variable_declaration_part TOKEN_BEGIN statement_list.stm TOKEN_END
 				public Symbol reduce(Symbol[] _symbols, int offset) {
 					final Symbol _symbol_stm = _symbols[offset + 3];
@@ -296,17 +355,42 @@ public class Parser extends beaver.Parser {
 				}
 			},
 			RETURN2,	// [67] procedure_statement = procedure_expression TOKEN_SEMIC; returns 'TOKEN_SEMIC' although none is marked
-			RETURN4,	// [68] procedure_expression = TOKEN_IDENTIFIER TOKEN_LPAR expression_part TOKEN_RPAR; returns 'TOKEN_RPAR' although none is marked
-			Action.NONE,  	// [69] expression_part = 
-			Action.RETURN,	// [70] expression_part = expression_list
-			new Action() {	// [71] expression_list = expression_list TOKEN_COMMA expression
+			new Action() {	// [68] procedure_expression = TOKEN_IDENTIFIER.id TOKEN_LPAR expression_part.args TOKEN_RPAR
 				public Symbol reduce(Symbol[] _symbols, int offset) {
-					((ArrayList) _symbols[offset + 1].value).add(_symbols[offset + 3].value); return _symbols[offset + 1];
+					final Symbol _symbol_id = _symbols[offset + 1];
+					final String id = (String) _symbol_id.value;
+					final Symbol _symbol_args = _symbols[offset + 3];
+					final NodeList args = (NodeList) _symbol_args.value;
+					 TypeFunct decl = funcEnv.get(id).declaration;
+																			   return new NodeCallFct(id, decl, args);
 				}
 			},
-			new Action() {	// [72] expression_list = expression
+			new Action() {	// [69] expression_part = 
 				public Symbol reduce(Symbol[] _symbols, int offset) {
-					ArrayList lst = new ArrayList(); lst.add(_symbols[offset + 1].value); return new Symbol(lst);
+					 return new NodeList();
+				}
+			},
+			new Action() {	// [70] expression_part = expression_list.list
+				public Symbol reduce(Symbol[] _symbols, int offset) {
+					final Symbol _symbol_list = _symbols[offset + 1];
+					final NodeList list = (NodeList) _symbol_list.value;
+					 return list;
+				}
+			},
+			new Action() {	// [71] expression_list = expression_list.list TOKEN_COMMA expression.e
+				public Symbol reduce(Symbol[] _symbols, int offset) {
+					final Symbol _symbol_list = _symbols[offset + 1];
+					final NodeList list = (NodeList) _symbol_list.value;
+					final Symbol _symbol_e = _symbols[offset + 3];
+					final NodeExp e = (NodeExp) _symbol_e.value;
+					 list.add(e); return list;
+				}
+			},
+			new Action() {	// [72] expression_list = expression.e
+				public Symbol reduce(Symbol[] _symbols, int offset) {
+					final Symbol _symbol_e = _symbols[offset + 1];
+					final NodeExp e = (NodeExp) _symbol_e.value;
+					 return new NodeList(e);
 				}
 			},
 			RETURN3,	// [73] new_statement = TOKEN_NEW variable_access TOKEN_SEMIC; returns 'TOKEN_SEMIC' although none is marked
@@ -533,7 +617,13 @@ public class Parser extends beaver.Parser {
 					 return e;
 				}
 			},
-			Action.RETURN,	// [109] expression = procedure_expression
+			new Action() {	// [109] expression = procedure_expression.funcCall
+				public Symbol reduce(Symbol[] _symbols, int offset) {
+					final Symbol _symbol_funcCall = _symbols[offset + 1];
+					final NodeCallFct funcCall = (NodeCallFct) _symbol_funcCall.value;
+					 return funcCall;
+				}
+			},
 			Action.RETURN,	// [110] expression = variable_access
 			Action.RETURN,	// [111] expression = literal
 			new Action() {	// [112] literal = TOKEN_LIT_INTEGER.literal

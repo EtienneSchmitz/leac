@@ -10,7 +10,6 @@ public class Environment implements EnvironmentInt {
     private String name;
     private Map<String, Node> map;
 
-
     public Environment(String name) {
         this.name = name;
         this.map = new HashMap<String, Node>();
@@ -24,7 +23,6 @@ public class Environment implements EnvironmentInt {
 
     @Override
     public Node get(String key) {
-
         return map.get(key);
     }
 }
