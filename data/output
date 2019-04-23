@@ -1,124 +1,49 @@
-*** Fichier data/progr5.lea
---> TOKEN_VAR : var
---> TOKEN_IDENTIFIER : x
---> TOKEN_COLON : :
---> TOKEN_INTEGER : integer
---> TOKEN_SEMIC : ;
---> TOKEN_FUNCTION : function
-x registered
---> TOKEN_IDENTIFIER : sum
---> TOKEN_LPAR : (
---> TOKEN_IDENTIFIER : i
---> TOKEN_COLON : :
---> TOKEN_INTEGER : integer
---> TOKEN_COMMA : ,
-i registered
---> TOKEN_IDENTIFIER : j
---> TOKEN_COLON : :
---> TOKEN_INTEGER : integer
---> TOKEN_RPAR : )
-j registered
---> TOKEN_COLON : :
---> TOKEN_INTEGER : integer
---> TOKEN_VAR : var
---> TOKEN_IDENTIFIER : k
---> TOKEN_COLON : :
---> TOKEN_INTEGER : integer
---> TOKEN_SEMIC : ;
---> TOKEN_BEGIN : begin
-k registered
---> TOKEN_RETURN : return
---> TOKEN_LPAR : (
---> TOKEN_IDENTIFIER : i
---> TOKEN_PLUS : +
---> TOKEN_IDENTIFIER : j
---> TOKEN_RPAR : )
---> TOKEN_SEMIC : ;
---> TOKEN_END : end
---> TOKEN_FUNCTION : function
---> TOKEN_IDENTIFIER : pgcd
---> TOKEN_LPAR : (
---> TOKEN_IDENTIFIER : i
---> TOKEN_COLON : :
---> TOKEN_INTEGER : integer
---> TOKEN_COMMA : ,
-i registered
---> TOKEN_IDENTIFIER : j
---> TOKEN_COLON : :
---> TOKEN_INTEGER : integer
---> TOKEN_RPAR : )
-j registered
---> TOKEN_COLON : :
---> TOKEN_INTEGER : integer
---> TOKEN_BEGIN : begin
---> TOKEN_WHILE : while
---> TOKEN_LPAR : (
---> TOKEN_IDENTIFIER : i
---> TOKEN_NE : !=
---> TOKEN_IDENTIFIER : j
---> TOKEN_RPAR : )
---> TOKEN_DO : do
---> TOKEN_IF : if
---> TOKEN_LPAR : (
---> TOKEN_IDENTIFIER : i
---> TOKEN_GT : >
---> TOKEN_IDENTIFIER : j
---> TOKEN_RPAR : )
---> TOKEN_THEN : then
---> TOKEN_IDENTIFIER : i
+*** Fichier data/test_program/test_enum.lea
+--> TOKEN_TYPE : type
+--> TOKEN_IDENTIFIER : days
 --> TOKEN_AFF : =
---> TOKEN_IDENTIFIER : i
---> TOKEN_MINUS : -
---> TOKEN_IDENTIFIER : j
---> TOKEN_SEMIC : ;
---> TOKEN_ELSE : else
---> TOKEN_IDENTIFIER : j
---> TOKEN_AFF : =
---> TOKEN_IDENTIFIER : j
---> TOKEN_MINUS : -
---> TOKEN_IDENTIFIER : i
---> TOKEN_SEMIC : ;
---> TOKEN_RETURN : return
 --> TOKEN_LPAR : (
---> TOKEN_IDENTIFIER : i
+--> TOKEN_IDENTIFIER : SUNDAY
+--> TOKEN_COMMA : ,
+--> TOKEN_IDENTIFIER : MONDAY
+--> TOKEN_COMMA : ,
+--> TOKEN_IDENTIFIER : TUESDAY
+--> TOKEN_COMMA : ,
+--> TOKEN_IDENTIFIER : WEDNESDAY
+--> TOKEN_COMMA : ,
+--> TOKEN_IDENTIFIER : THURSDAY
+--> TOKEN_COMMA : ,
+--> TOKEN_IDENTIFIER : FRIDAY
+--> TOKEN_COMMA : ,
+--> TOKEN_IDENTIFIER : SATURDAY
 --> TOKEN_RPAR : )
 --> TOKEN_SEMIC : ;
---> TOKEN_END : end
---> TOKEN_FUNCTION : function
---> TOKEN_IDENTIFIER : foo
---> TOKEN_LPAR : (
---> TOKEN_RPAR : )
+--> TOKEN_VAR : var
+--> TOKEN_IDENTIFIER : d
 --> TOKEN_COLON : :
---> TOKEN_INTEGER : integer
---> TOKEN_BEGIN : begin
---> TOKEN_RETURN : return
+--> TOKEN_ARRAY : array
+--> TOKEN_LBRACKET : [
 --> TOKEN_LIT_INTEGER : 1
+--> TOKEN_DOTDOT : ..
+--> TOKEN_LIT_INTEGER : 10
+--> TOKEN_RBRACKET : ]
+--> TOKEN_OF : of
+--> TOKEN_STRING : string
 --> TOKEN_SEMIC : ;
---> TOKEN_END : end
 --> TOKEN_BEGIN : begin
---> TOKEN_IDENTIFIER : x
+d registered
+--> TOKEN_IDENTIFIER : d
+--> TOKEN_LBRACKET : [
+--> TOKEN_LIT_INTEGER : 2
+--> TOKEN_RBRACKET : ]
 --> TOKEN_AFF : =
---> TOKEN_LIT_INTEGER : 5
---> TOKEN_SEMIC : ;
---> TOKEN_IDENTIFIER : x
---> TOKEN_AFF : =
---> TOKEN_IDENTIFIER : sum
---> TOKEN_LPAR : (
---> TOKEN_LIT_INTEGER : 3
---> TOKEN_COMMA : ,
---> TOKEN_LIT_INTEGER : 5
---> TOKEN_RPAR : )
+--> TOKEN_LIT_STRING : "
 --> TOKEN_SEMIC : ;
 --> TOKEN_END : end
-NodeList(NodeAssign(NodeId#x:TypeInt_null#, NodeLiteral#5:TypeInt_5#), NodeAssign(NodeId#x:TypeInt_null#, sum_NodeCallFct(NodeList(NodeLiteral#3:TypeInt_3#, NodeLiteral#5:TypeInt_5#))))
+NodeList(NodeAssign(NodeArrayAccess(NodeId#d:TypeArray(TypeArrayRange[TypeInt_1..TypeInt_10], TypeString)#, NodeLiteral#2:TypeInt_2#), NodeLiteral#5:TypeString#))
 *** Analyse syntaxique ok
 --- CheckType NodeList
 --- CheckType NodeAssign
---- CheckType NodeId
---- CheckType NodeLiteral
---- CheckType NodeAssign
---- CheckType NodeId
---- CheckType NodeCallFct
---- CheckType NodeLiteral
+--- CheckType NodeArrayAccess
 --- CheckType NodeLiteral
 *** Typage correct
