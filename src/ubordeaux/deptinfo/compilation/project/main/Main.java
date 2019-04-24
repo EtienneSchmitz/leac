@@ -14,8 +14,8 @@ public class Main {
 					checksType = true;
 			} else {
 				ScannerLea input = new ScannerLea(new FileReader(arg));
-				Parser parser = new Parser();
 				try {
+					Parser parser = new Parser();
 					System.err.println("*** Fichier " + arg);
 					Node result = (Node) parser.parse(input);
 					//System.out.println(result.toString());

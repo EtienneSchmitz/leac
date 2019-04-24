@@ -1,7 +1,10 @@
 package ubordeaux.deptinfo.compilation.project.environment;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
+import ubordeaux.deptinfo.compilation.project.main.CompilationException;
 import ubordeaux.deptinfo.compilation.project.node.Node;
 import ubordeaux.deptinfo.compilation.project.node.NodeId;
 import ubordeaux.deptinfo.compilation.project.node.NodeList;
@@ -10,18 +13,35 @@ public class StackEnvironment {
     private Scope[] scopes;
     private int scopeIndex;
     
-    public final static boolean IS_MAIN_SCOPE_GLOBAL = false;
+    public final static boolean IS_MAIN_SCOPE_GLOBAL = true;
     public final static int MAX_NESTED_SCOPES = 256;
     
     private class Scope {
-    	public NodeList variables = null;
+    	public Map<String, NodeId> variables = new HashMap<String, NodeId>();
     	public boolean canAccessToParentScope = false;
     	
     	public Scope() {
     	}
     	
     	public Scope(NodeList variables) {
-    		this.variables = variables;
+    		add(variables);
+    	}
+    	
+    	public void add(NodeList variables) {
+    		Iterator<Node> it = variables.iterator();
+    		
+    		while(it.hasNext())
+    			add(it.next());
+    	}
+    	
+    	public void add(Node variable) {
+    		try {
+	    		NodeId node = (NodeId)variable;
+	    		if(variables.putIfAbsent(node.getName(), node) != null)
+	    			CompilationException.halt("The variable " + node.getName() + " already exist in this scope.", node);
+    		} catch (ClassCastException e) {
+    			CompilationException.halt("Only NodeId can be added into a scope.");
+    		}
     	}
     }
     
@@ -33,13 +53,13 @@ public class StackEnvironment {
     
     public void addNewScope(NodeList variables, boolean canAccessToParent) {
     	stackScope();
-    	scopes[scopeIndex].variables = variables;
+    	scopes[scopeIndex].add(variables);
     	scopes[scopeIndex].canAccessToParentScope = canAccessToParent;
     	
     	if(canAccessToParent && scopeIndex < 2)
-    		log("Global and first-level scopes can not have acces to their parent.");
+    		CompilationException.halt("Global and first-level scopes can not have acces to their parent.");
     	
-    	log(variables.size() + " elements added to the stack. (new scope)");
+    	log(variables.size() + " elements added to the stack. (new scope).");
     }
     
     public void addNewScope(NodeId variable, boolean canAccessToParent) {
@@ -49,10 +69,11 @@ public class StackEnvironment {
     
     public void addToCurrentScope(NodeList variables) {
     	if(!isStackEmpty()) {
-    		Iterator<Node> it = variables.iterator();
-    		
-    		while(it.hasNext())
-    			scopes[scopeIndex].variables.add(it.next());;
+    		scopes[scopeIndex].add(variables);
+    			
+    		log(variables.size() + " elements added to the stack. (current scope).");
+    	} else {
+    		CompilationException.halt("There is no scope to work with.");
     	}
     }
     
@@ -64,14 +85,14 @@ public class StackEnvironment {
     	scopeIndex++;
     	
     	if(scopeIndex >= MAX_NESTED_SCOPES)
-    		log("Unable to handle more than " + MAX_NESTED_SCOPES + " nested scopes.");
+    		CompilationException.halt("Unable to handle more than " + MAX_NESTED_SCOPES + " nested scopes.");
     	
     	scopes[scopeIndex] = new Scope();
     }
     
     private Scope unstackScope() {
     	if(isStackEmpty())
-    		log("Unable to unstack an empty stack.");
+    		CompilationException.halt("Unable to unstack an empty stack.");
     	
     	Scope scope = scopes[scopeIndex];
     	scopes[scopeIndex] = null;
@@ -88,13 +109,9 @@ public class StackEnvironment {
     	if(index < 0)
     		return null;
     	
-    	Iterator<Node> it = scopes[index].variables.iterator();
-    	
-    	while(it.hasNext()) {
-    		NodeId node = (NodeId)it.next();
-    		
-    		if(node.getName().equals(id))
-    			return node;
+    	for(Map.Entry<String, NodeId> var : scopes[index].variables.entrySet()) {
+    		if(id.equals(var.getKey()))
+    			return var.getValue();
     	}
     	
     	if(index > 1 && scopes[index].canAccessToParentScope)
@@ -106,8 +123,8 @@ public class StackEnvironment {
     	return null;
     }
     
-    public boolean closeCurrentScope() {
-    	return unstackScope() != null;
+    public void closeCurrentScope() {
+    	unstackScope();
     }
     
     public Node get(String id) {
@@ -115,12 +132,12 @@ public class StackEnvironment {
     		Node node = findInScope(id, scopeIndex);
     		
     		if(node == null)
-    			log("Variable \"" + id + "\" does not exist in this scope.");
+    			CompilationException.halt("Variable \"" + id + "\" does not exist in this scope.");
     		
     		return node;
-    	} else {
-    		log("There is no scope to search the variable in.");
-    	}
+    	} 
+    	CompilationException.halt("There is no scope to search the variable in.");
+    	
     	return null;
     }
     

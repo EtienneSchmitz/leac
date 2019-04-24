@@ -8,7 +8,7 @@ begin
 end
 
 function sum(i : integer, j : integer) : integer
-var k:integer;
+var k :integer;
 begin
   return (i+j);
 end
