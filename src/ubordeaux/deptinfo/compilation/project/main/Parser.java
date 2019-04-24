@@ -378,7 +378,7 @@ public class Parser extends beaver.Parser {
 			Action.RETURN,	// [57] statement = simple_statement
 			Action.RETURN,	// [58] statement = structured_statement
 			Action.RETURN,	// [59] simple_statement = assignment_statement
-			Action.RETURN,	// [60] simple_statement = procedure_statement
+			Action.RETURN,	// [60] simple_statement = procedure_statement.n
 			Action.RETURN,	// [61] simple_statement = new_statement
 			Action.RETURN,	// [62] simple_statement = dispose_statement
 			Action.RETURN,	// [63] simple_statement = println_statement
@@ -393,7 +393,7 @@ public class Parser extends beaver.Parser {
 					 return new NodeAssign(var, expr);
 				}
 			},
-			RETURN2,	// [67] procedure_statement = procedure_expression TOKEN_SEMIC; returns 'TOKEN_SEMIC' although none is marked
+			Action.RETURN,	// [67] procedure_statement = procedure_expression.n TOKEN_SEMIC
 			new Action() {	// [68] procedure_expression = TOKEN_IDENTIFIER.id TOKEN_LPAR expression_part.args TOKEN_RPAR
 				public Symbol reduce(Symbol[] _symbols, int offset) {
 					final Symbol _symbol_id = _symbols[offset + 1];

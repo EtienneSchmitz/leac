@@ -78,7 +78,7 @@
 %typeof expression = "NodeExp";
 %typeof statement_list = "NodeList";
 %typeof variable_access = "NodeExp";
-%typeof statement = "Node";
+%typeof statement, simple_statement = "Node";
 %typeof type = "Type";
 %typeof assignment_statement = "NodeAssign";
 %typeof TOKEN_IDENTIFIER, TOKEN_LIT_STRING = "String";
@@ -98,7 +98,7 @@
 %typeof argt_part = "TypeTuple";
 %typeof argt_list = "NodeList";
 %typeof argt = "NodeId";
-%typeof procedure_expression = "NodeCallFct";
+%typeof procedure_expression, procedure_statement = "NodeCallFct";
 %typeof subrange_type = "TypeArrayRange";
 %typeof array_type = "TypeArray";
 %typeof range_type = "TypeRange";
@@ -305,7 +305,7 @@ statement=
 
 simple_statement=
 	assignment_statement
-	| procedure_statement
+	| procedure_statement.n
 	| new_statement
 	| dispose_statement
 	| println_statement
@@ -318,7 +318,7 @@ assignment_statement=
 	;
 
 procedure_statement=
-	procedure_expression TOKEN_SEMIC
+	procedure_expression.n TOKEN_SEMIC
 	;
 
 procedure_expression=

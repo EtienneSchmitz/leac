@@ -13,7 +13,7 @@ public class StackEnvironment {
     private Scope[] scopes;
     private int scopeIndex;
     
-    public final static boolean IS_MAIN_SCOPE_GLOBAL = true;
+    public final static boolean IS_MAIN_SCOPE_GLOBAL = false;
     public final static int MAX_NESTED_SCOPES = 256;
     
     private class Scope {
