@@ -1,7 +1,6 @@
 var
-d : array [ 1 .. 10 ] of string;
+d : integer;
 
 begin
-    d[1]="B";
-    d[2]="B";
+d=100;
 end

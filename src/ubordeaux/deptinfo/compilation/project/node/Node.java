@@ -1,5 +1,6 @@
 package ubordeaux.deptinfo.compilation.project.node;
 
+import ubordeaux.deptinfo.compilation.project.intermediateCode.IntermediateCode;
 import ubordeaux.deptinfo.compilation.project.main.ClonableSymbol;
 
 import java.io.BufferedWriter;
@@ -92,9 +93,11 @@ public abstract class Node extends ClonableSymbol implements NodeInterface {
 	}
 
 	@Override
-	public void generateIntermediateCode() {
+	public IntermediateCode generateIntermediateCode() {
 		// TODO Auto-generated method stub
 		System.err.println("TODO: " + this.getClass().getSimpleName() + ".generateIntermediateCode()");
+
+		return null;
 	}
 
 }
