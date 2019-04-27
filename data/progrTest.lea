@@ -2,5 +2,5 @@ var
 d : integer;
 
 begin
-d=158;
+d=3-36;
 end

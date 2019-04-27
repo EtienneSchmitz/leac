@@ -397,11 +397,11 @@ variable_access=
 	;
 
 expression=
-	expression.e1 TOKEN_PLUS expression.e2						   	{: return new NodeOp("plus",e1, e2); :}
-	| expression.e1 TOKEN_MINUS expression.e2						{: return new NodeOp("minus",e1, e2); :}
-	| expression.e1 TOKEN_TIMES expression.e2						{: return new NodeOp("times",e1, e2); :}
-	| expression.e1 TOKEN_DIV expression.e2							{: return new NodeOp("division",e1, e2); :}
-	| TOKEN_MINUS expression.e  @PRIORMAX                           {: return new NodeOp("minus",e); :}
+	expression.e1 TOKEN_PLUS expression.e2						   	{: return new NodeOp(Operator.PLUS,e1, e2); :}
+	| expression.e1 TOKEN_MINUS expression.e2						{: return new NodeOp(Operator.MINUS,e1, e2); :}
+	| expression.e1 TOKEN_TIMES expression.e2						{: return new NodeOp(Operator.TIMES,e1, e2); :}
+	| expression.e1 TOKEN_DIV expression.e2							{: return new NodeOp(Operator.DIVIDE, e1, e2); :}
+	| TOKEN_MINUS expression.e  @PRIORMAX                           {: return new NodeOp(Operator.MINUS,e); :}
 	| expression.e1 TOKEN_OR expression.e2							{: return new NodeRel("or", e1, e2); :}
 	| expression.e1 TOKEN_AND expression.e2							{: return new NodeRel("and", e1, e2); :}
 	| TOKEN_NOT expression.e                                        {: return new NodeRel("not", e); :}
