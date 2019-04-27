@@ -2,7 +2,7 @@ package ubordeaux.deptinfo.compilation.project.node;
 
 import ubordeaux.deptinfo.compilation.project.intermediateCode.Const;
 import ubordeaux.deptinfo.compilation.project.intermediateCode.Exp;
-import ubordeaux.deptinfo.compilation.project.type.Type;
+import ubordeaux.deptinfo.compilation.project.type.*;
 
 public final class NodeLiteral extends NodeExp {
 
@@ -12,6 +12,7 @@ public final class NodeLiteral extends NodeExp {
 		super();
 		this.type = type;
 		this.value = value;
+		System.out.println(value);
 	}
 
 	public String toString() {
@@ -35,7 +36,17 @@ public final class NodeLiteral extends NodeExp {
 
 	@Override
 	public Exp generateIntermediateCode() {
-
-		return new Const((int) this.value);
+		if(this.type instanceof TypeInt) {
+			System.out.println("test");
+			return new Const((int) this.value);
+		}
+		else if(this.type instanceof  TypeBoolean) {
+			System.out.println("test 2");
+			int boolean_choose = (boolean) this.value ? 1 : 0;
+			return new Const(boolean_choose);
+ 		}
+		else {
+			return null;
+		}
 	}
 }

@@ -420,7 +420,7 @@ expression=
 literal=
 	TOKEN_LIT_INTEGER.literal       {: return new NodeLiteral(new TypeInt(literal), literal); :}
 	| TOKEN_LIT_STRING.literal      {: return new NodeLiteral(new TypeString(), literal); :}
-	| TOKEN_TRUE.literal            {: return new NodeLiteral(new TypeBoolean(), literal); :}
+	| TOKEN_TRUE.literal            {: debug(literal); return new NodeLiteral(new TypeBoolean(), literal); :}
 	| TOKEN_FALSE.literal           {: return new NodeLiteral(new TypeBoolean(), literal); :}
 	| TOKEN_NULL.literal            {: return new NodeLiteral(new TypePointer(), literal); :}
 	;
