@@ -1,6 +1,10 @@
 var
-d : integer;
+a : integer;
 
 begin
-d=3-36;
+a=100;
+while (a >= 0 && a<=100) do
+	begin
+	    a = a - 1;
+    end
 end

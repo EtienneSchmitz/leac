@@ -1,15 +1,17 @@
 package ubordeaux.deptinfo.compilation.project.main;
 
-public enum Operator {
-    PLUS("plus"),
-    MINUS("minus"),
-    TIMES("times"),
-    DIVIDE("divide");
-
+public enum Relation_Operator {
+    EQ("="),
+    NE("!="),
+    LT("<"),
+    GT(">"),
+    LE("<="),
+    GE(">=")
+    ;
     private String name = "";
 
     //Constructeur
-    Operator(String name){
+    Relation_Operator(String name){
         this.name = name;
     }
 

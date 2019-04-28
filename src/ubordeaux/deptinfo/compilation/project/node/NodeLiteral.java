@@ -37,11 +37,9 @@ public final class NodeLiteral extends NodeExp {
 	@Override
 	public Exp generateIntermediateCode() {
 		if(this.type instanceof TypeInt) {
-			System.out.println("test");
 			return new Const((int) this.value);
 		}
 		else if(this.type instanceof  TypeBoolean) {
-			System.out.println("test 2");
 			int boolean_choose = (boolean) this.value ? 1 : 0;
 			return new Const(boolean_choose);
  		}

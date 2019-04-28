@@ -1,5 +1,7 @@
 package ubordeaux.deptinfo.compilation.project.node;
 
+import ubordeaux.deptinfo.compilation.project.intermediateCode.*;
+
 public final class NodeWhile extends Node {
 
 	public NodeWhile(Node boolExpr, Node stm) {
@@ -29,5 +31,23 @@ public final class NodeWhile extends Node {
 		return this.get(0);
 	}
 
+	@Override
+	public Seq generateIntermediateCode() {
+		// Create Label
+		LabelLocation labelLocation_begin = new LabelLocation(), labelLocation_continue = new LabelLocation(), labelLocation_done = new LabelLocation();
+		Label l_begin = new Label(labelLocation_begin), l_continue = new Label(labelLocation_continue), l_done = new Label(labelLocation_done);
 
+		// Generate intermediate code
+		getExp().generateIntermediateCode();
+		getStm().generateIntermediateCode();
+
+
+		// Create Sequence
+		Seq seq_done = new Seq(new Jump(labelLocation_done), l_done);
+		Cjump equality = new Cjump(0, null,null, labelLocation_continue, labelLocation_done);
+
+		new Seq(l_begin, new Seq(equality, new Seq(l_continue, new Seq(null, seq_done))));
+
+		return null;
+	}
 }
