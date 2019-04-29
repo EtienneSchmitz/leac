@@ -2,6 +2,7 @@ package ubordeaux.deptinfo.compilation.project.node;
 
 import ubordeaux.deptinfo.compilation.project.environment.FunctionEnvironment;
 import ubordeaux.deptinfo.compilation.project.environment.TypeEnvironment;
+import ubordeaux.deptinfo.compilation.project.intermediateCode.IntermediateCode;
 import ubordeaux.deptinfo.compilation.project.main.ClonableSymbol;
 import ubordeaux.deptinfo.compilation.project.main.CompilationException;
 
@@ -57,7 +58,9 @@ public class NodeMain extends Node {
 	public boolean checksType() {
 		return getStatements().checksType();
 	}
-	
-	
 
+	@Override
+	public IntermediateCode generateIntermediateCode() {
+		return getStatements().generateIntermediateCode();
+	}
 }

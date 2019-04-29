@@ -1,7 +1,13 @@
 var
 a : integer;
-b : boolean;
+b, y, x : boolean;
+
 
 begin
-b=a>=0;
+ if (x==10) then begin
+	    y = 1;
+	    x = 2;
+     end
+     else
+        x = x + 1;
 end
