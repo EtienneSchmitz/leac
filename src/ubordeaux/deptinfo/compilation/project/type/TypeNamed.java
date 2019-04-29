@@ -21,6 +21,8 @@ public class TypeNamed extends TypeAtomic {
 	public String toString() {
 		return super.toString() + '_' + name;
 	}
-
-
+	
+	public String getName() {
+		return name;
+	}
 }

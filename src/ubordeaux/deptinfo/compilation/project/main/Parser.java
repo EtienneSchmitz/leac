@@ -1,6 +1,5 @@
 package ubordeaux.deptinfo.compilation.project.main;
 
-import ubordeaux.deptinfo.compilation.project.environment.FunctionEnvironment.Function;
 import java.util.Iterator;
 import ubordeaux.deptinfo.compilation.project.environment.*;
 import ubordeaux.deptinfo.compilation.project.type.*;
@@ -62,15 +61,15 @@ public class Parser extends beaver.Parser {
 		}
 	};
 
-	static final Action RETURN4 = new Action() {
-		public Symbol reduce(Symbol[] _symbols, int offset) {
-			return _symbols[offset + 4];
-		}
-	};
-
 	static final Action RETURN3 = new Action() {
 		public Symbol reduce(Symbol[] _symbols, int offset) {
 			return _symbols[offset + 3];
+		}
+	};
+
+	static final Action RETURN4 = new Action() {
+		public Symbol reduce(Symbol[] _symbols, int offset) {
+			return _symbols[offset + 4];
 		}
 	};
 
@@ -93,7 +92,8 @@ public class Parser extends beaver.Parser {
         System.out.println(msg);
     }
 
-	private Environment typeEnvironment = new Environment("types");
+	//private Environment typeEnvironment = new Environment("types");
+	private TypeEnvironment typeEnv = new TypeEnvironment();
 	private FunctionEnvironment funcEnv = new FunctionEnvironment();
 	private StackEnvironment stackEnv = new StackEnvironment();
 	private String type_declaration_name;
@@ -103,11 +103,13 @@ public class Parser extends beaver.Parser {
 	public Parser() {
 		super(PARSING_TABLES);
 		actions = new Action[] {
-			new Action() {	// [0] program = type_declaration_part variable_declaration_part procedure_definition_part TOKEN_BEGIN statement_list.stm TOKEN_END
+			new Action() {	// [0] program = type_declaration_part variable_declaration_part.var procedure_definition_part TOKEN_BEGIN statement_list.stm TOKEN_END
 				public Symbol reduce(Symbol[] _symbols, int offset) {
+					final Symbol _symbol_var = _symbols[offset + 2];
+					final NodeList var = (NodeList) _symbol_var.value;
 					final Symbol _symbol_stm = _symbols[offset + 5];
 					final NodeList stm = (NodeList) _symbol_stm.value;
-					 stackEnv.closeCurrentScope(); return stm;
+					 stackEnv.closeCurrentScope(); return new NodeMain(typeEnv, var, funcEnv, stm);
 				}
 			},
 			Action.NONE,  	// [1] type_declaration_part = 
@@ -122,8 +124,22 @@ public class Parser extends beaver.Parser {
 					ArrayList lst = new ArrayList(); lst.add(_symbols[offset + 1]); return new Symbol(lst);
 				}
 			},
-			RETURN4,	// [5] type_declaration = type_declaration_head TOKEN_AFF type TOKEN_SEMIC; returns 'TOKEN_SEMIC' although none is marked
-			Action.RETURN,	// [6] type_declaration_head = TOKEN_IDENTIFIER
+			new Action() {	// [5] type_declaration = type_declaration_head.name TOKEN_AFF type.t TOKEN_SEMIC
+				public Symbol reduce(Symbol[] _symbols, int offset) {
+					final Symbol _symbol_name = _symbols[offset + 1];
+					final TypeNamed name = (TypeNamed) _symbol_name.value;
+					final Symbol _symbol_t = _symbols[offset + 3];
+					final Type t = (Type) _symbol_t.value;
+					 typeEnv.add(name.getName(), t); return t;
+				}
+			},
+			new Action() {	// [6] type_declaration_head = TOKEN_IDENTIFIER.id
+				public Symbol reduce(Symbol[] _symbols, int offset) {
+					final Symbol _symbol_id = _symbols[offset + 1];
+					final String id = (String) _symbol_id.value;
+					 return new TypeNamed(id);
+				}
+			},
 			Action.RETURN,	// [7] type = simple_type
 			Action.RETURN,	// [8] type = named_type
 			Action.RETURN,	// [9] type = index_type
@@ -247,15 +263,27 @@ public class Parser extends beaver.Parser {
 				}
 			},
 			Action.NONE,  	// [39] procedure_definition_part = 
-			Action.RETURN,	// [40] procedure_definition_part = procedure_definition_list
-			new Action() {	// [41] procedure_definition_list = procedure_definition_list procedure_definition
+			new Action() {	// [40] procedure_definition_part = procedure_definition_list.list
 				public Symbol reduce(Symbol[] _symbols, int offset) {
-					((ArrayList) _symbols[offset + 1].value).add(_symbols[offset + 2].value); return _symbols[offset + 1];
+					final Symbol _symbol_list = _symbols[offset + 1];
+					final NodeList list = (NodeList) _symbol_list.value;
+					 return list;
 				}
 			},
-			new Action() {	// [42] procedure_definition_list = procedure_definition
+			new Action() {	// [41] procedure_definition_list = procedure_definition_list.list procedure_definition.func
 				public Symbol reduce(Symbol[] _symbols, int offset) {
-					ArrayList lst = new ArrayList(); lst.add(_symbols[offset + 1].value); return new Symbol(lst);
+					final Symbol _symbol_list = _symbols[offset + 1];
+					final NodeList list = (NodeList) _symbol_list.value;
+					final Symbol _symbol_func = _symbols[offset + 2];
+					final NodeFunction func = (NodeFunction) _symbol_func.value;
+					 list.add(func); return list;
+				}
+			},
+			new Action() {	// [42] procedure_definition_list = procedure_definition.func
+				public Symbol reduce(Symbol[] _symbols, int offset) {
+					final Symbol _symbol_func = _symbols[offset + 1];
+					final NodeFunction func = (NodeFunction) _symbol_func.value;
+					 return new NodeList(func);
 				}
 			},
 			new Action() {	// [43] procedure_definition = procedure_definition_head.decl block.def
@@ -264,17 +292,17 @@ public class Parser extends beaver.Parser {
 					final TypeFunct decl = (TypeFunct) _symbol_decl.value;
 					final Symbol _symbol_def = _symbols[offset + 2];
 					final NodeList def = (NodeList) _symbol_def.value;
-					 System.out.println("CONTEXT : " + decl.getName()); funcEnv.add(decl.getName(), decl, def);
+					 NodeFunction function = new NodeFunction(decl, def); funcEnv.add(function.getDeclaration().getName(), function);
 															   stackEnv.closeCurrentScope();
-														   	   return decl;
+														   	   return function;
 				}
 			},
 			new Action() {	// [44] procedure_definition = procedure_declaration_head.decl TOKEN_SEMIC
 				public Symbol reduce(Symbol[] _symbols, int offset) {
 					final Symbol _symbol_decl = _symbols[offset + 1];
 					final TypeFunct decl = (TypeFunct) _symbol_decl.value;
-					 System.out.println("CONTEXT : " + decl.getName()); funcEnv.add(decl.getName(), decl);
-														   return decl;
+					 NodeFunction function = new NodeFunction(decl, null); funcEnv.add(function.getDeclaration().getName(), function);
+														   return function;
 				}
 			},
 			new Action() {	// [45] procedure_definition_head = procedure_head.funct
@@ -400,7 +428,7 @@ public class Parser extends beaver.Parser {
 					final String id = (String) _symbol_id.value;
 					final Symbol _symbol_args = _symbols[offset + 3];
 					final NodeList args = (NodeList) _symbol_args.value;
-					 TypeFunct decl = funcEnv.get(id).declaration;
+					 TypeFunct decl = funcEnv.get(id).getDeclaration();
 																			   return new NodeCallFct(id, decl, args);
 				}
 			},

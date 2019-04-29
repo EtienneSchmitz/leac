@@ -5,7 +5,6 @@
 %import "ubordeaux.deptinfo.compilation.project.node.*";
 %import "ubordeaux.deptinfo.compilation.project.type.*";
 %import "ubordeaux.deptinfo.compilation.project.environment.*";
-%import "ubordeaux.deptinfo.compilation.project.environment.FunctionEnvironment.Function";
 %import "java.util.ArrayList";
 %import "java.util.Iterator";
 
@@ -29,7 +28,8 @@
         System.out.println(msg);
     }
 
-	private Environment typeEnvironment = new Environment("types");
+	//private Environment typeEnvironment = new Environment("types");
+	private TypeEnvironment typeEnv = new TypeEnvironment();
 	private FunctionEnvironment funcEnv = new FunctionEnvironment();
 	private StackEnvironment stackEnv = new StackEnvironment();
 	private String type_declaration_name;
@@ -71,6 +71,7 @@
 %left TOKEN_IF;
 
 // Types
+%typeof type_declaration_head = "TypeNamed";
 %typeof block = "NodeList";
 %typeof variable_declaration, variable_declaration_list, variable_declaration_part = "NodeList";
 %typeof expression_part = "NodeList";
@@ -91,7 +92,8 @@
 %typeof case_statement_list = "NodeList";
 %typeof case_statement = "NodeCaseList";
 %typeof case_default = "NodeCase";
-%typeof procedure_definition = "TypeFunct";
+%typeof procedure_definition_list, procedure_definition_part = "NodeList"; 
+%typeof procedure_definition = "NodeFunction";
 %typeof procedure_definition_head = "TypeFunct";
 %typeof procedure_declaration_head = "TypeFunct";
 %typeof procedure_head = "TypeFunct";
@@ -129,11 +131,11 @@
 
 program=
 	type_declaration_part
-	variable_declaration_part
+	variable_declaration_part.var
 	procedure_definition_part
 	TOKEN_BEGIN
 	statement_list.stm
-	TOKEN_END               {: stackEnv.closeCurrentScope(); return stm; :}
+	TOKEN_END               {: stackEnv.closeCurrentScope(); return new NodeMain(typeEnv, var, funcEnv, stm); :}
 	;
 
 type_declaration_part=
@@ -147,11 +149,11 @@ type_declaration_list=
 	;
 
 type_declaration=
-	type_declaration_head TOKEN_AFF type TOKEN_SEMIC
+	type_declaration_head.name TOKEN_AFF type.t TOKEN_SEMIC	{: typeEnv.add(name.getName(), t); return t; :}
 	;
 
 type_declaration_head=
-	TOKEN_IDENTIFIER
+	TOKEN_IDENTIFIER.id		{: return new TypeNamed(id); :}
 	;
 
 type=
@@ -239,20 +241,20 @@ identifier_list=
 	;
 
 procedure_definition_part=
-	| procedure_definition_list
+	| procedure_definition_list.list								{: return list;	:}
 	;
 
 procedure_definition_list=
-	procedure_definition_list procedure_definition
-	| procedure_definition
+	procedure_definition_list.list procedure_definition.func		{: list.add(func); return list;	:}
+	| procedure_definition.func										{: return new NodeList(func);	:}
 	;
 
 procedure_definition=
-	procedure_definition_head.decl block.def				{: System.out.println("CONTEXT : " + decl.getName()); funcEnv.add(decl.getName(), decl, def);
+	procedure_definition_head.decl block.def				{: NodeFunction function = new NodeFunction(decl, def); funcEnv.add(function.getDeclaration().getName(), function);
 															   stackEnv.closeCurrentScope();
-														   	   return decl; :}
-	| procedure_declaration_head.decl TOKEN_SEMIC		{: System.out.println("CONTEXT : " + decl.getName()); funcEnv.add(decl.getName(), decl);
-														   return decl; :}
+														   	   return function; :}
+	| procedure_declaration_head.decl TOKEN_SEMIC		{: NodeFunction function = new NodeFunction(decl, null); funcEnv.add(function.getDeclaration().getName(), function);
+														   return function; :}
 	;
 
 procedure_definition_head=
@@ -322,7 +324,7 @@ procedure_statement=
 	;
 
 procedure_expression=
-	TOKEN_IDENTIFIER.id TOKEN_LPAR expression_part.args TOKEN_RPAR			{: TypeFunct decl = funcEnv.get(id).declaration;
+	TOKEN_IDENTIFIER.id TOKEN_LPAR expression_part.args TOKEN_RPAR			{: TypeFunct decl = funcEnv.get(id).getDeclaration();
 																			   return new NodeCallFct(id, decl, args); :}
 	;
 
