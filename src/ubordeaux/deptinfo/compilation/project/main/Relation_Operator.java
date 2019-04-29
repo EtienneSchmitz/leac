@@ -2,11 +2,14 @@ package ubordeaux.deptinfo.compilation.project.main;
 
 public enum Relation_Operator {
     EQ("="),
-    NE("!="),
+    NEQ("!="),
     LT("<"),
     GT(">"),
     LE("<="),
-    GE(">=")
+    GE(">="),
+    NOT("!"),
+    AND("&&"),
+    OR("||")
     ;
     private String name = "";
 

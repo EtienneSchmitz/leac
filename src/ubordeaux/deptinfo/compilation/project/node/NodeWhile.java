@@ -44,7 +44,7 @@ public final class NodeWhile extends Node {
 
 		// Create Sequence
 		Seq seq_done = new Seq(new Jump(labelLocation_done), l_done);
-		Cjump equality = new Cjump(0, null,null, labelLocation_continue, labelLocation_done);
+		Cjump equality = new Cjump(null, null,null, labelLocation_continue, labelLocation_done);
 
 		new Seq(l_begin, new Seq(equality, new Seq(l_continue, new Seq(null, seq_done))));
 

@@ -402,15 +402,15 @@ expression=
 	| expression.e1 TOKEN_TIMES expression.e2						{: return new NodeOp(Operator.TIMES,e1, e2); :}
 	| expression.e1 TOKEN_DIV expression.e2							{: return new NodeOp(Operator.DIVIDE, e1, e2); :}
 	| TOKEN_MINUS expression.e  @PRIORMAX                           {: return new NodeOp(Operator.MINUS,e); :}
-	| expression.e1 TOKEN_OR expression.e2							{: return new NodeRel("or", e1, e2); :}
-	| expression.e1 TOKEN_AND expression.e2							{: return new NodeRel("and", e1, e2); :}
-	| TOKEN_NOT expression.e                                        {: return new NodeRel("not", e); :}
-	| expression.e1 TOKEN_LT expression.e2							{: return new NodeRel("lesser_than", e1, e2); :}
-	| expression.e1 TOKEN_LE expression.e2							{: return new NodeRel("lesser_or_equal", e1, e2); :}
-	| expression.e1 TOKEN_GT expression.e2							{: return new NodeRel("greater_than", e1, e2); :}
-	| expression.e1 TOKEN_GE expression.e2 						   	{: return new NodeRel("great_or_equal", e1, e2); :}
-	| expression.e1 TOKEN_EQ expression.e2							{: return new NodeRel("equal", e1, e2); :}
-	| expression.e1 TOKEN_NE expression.e2							{: return new NodeRel("not_equal", e1, e2); :}
+	| expression.e1 TOKEN_OR expression.e2							{: return new NodeRel(Relation_Operator.OR, e1, e2); :}
+	| expression.e1 TOKEN_AND expression.e2							{: return new NodeRel(Relation_Operator.AND, e1, e2); :}
+	| TOKEN_NOT expression.e                                        {: return new NodeRel(Relation_Operator.NOT, e); :}
+	| expression.e1 TOKEN_LT expression.e2							{: return new NodeRel(Relation_Operator.LT, e1, e2); :}
+	| expression.e1 TOKEN_LE expression.e2							{: return new NodeRel(Relation_Operator.LE, e1, e2); :}
+	| expression.e1 TOKEN_GT expression.e2							{: return new NodeRel(Relation_Operator.GT, e1, e2); :}
+	| expression.e1 TOKEN_GE expression.e2 						   	{: return new NodeRel(Relation_Operator.GE, e1, e2); :}
+	| expression.e1 TOKEN_EQ expression.e2							{: return new NodeRel(Relation_Operator.EQ, e1, e2); :}
+	| expression.e1 TOKEN_NE expression.e2							{: return new NodeRel(Relation_Operator.NEQ, e1, e2); :}
 	| TOKEN_LPAR expression.e TOKEN_RPAR                            {: return e; :}
 	| procedure_expression.funcCall									{: return funcCall; :}
 	| variable_access

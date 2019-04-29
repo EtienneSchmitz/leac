@@ -10,4 +10,8 @@ public class Eseq extends Exp {
 		this.exp = exp;
 	}
 
+	@Override
+	public String toString() {
+		return "Eseq(" + stm.toString() + ", " + exp.toString() + ")";
+	}
 }

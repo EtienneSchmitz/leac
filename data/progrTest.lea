@@ -1,10 +1,7 @@
 var
 a : integer;
+b : boolean;
 
 begin
-a=100;
-while (a >= 0 && a<=100) do
-	begin
-	    a = a - 1;
-    end
+b=a>=0;
 end

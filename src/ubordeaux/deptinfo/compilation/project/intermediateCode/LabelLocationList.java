@@ -10,4 +10,12 @@ public class LabelLocationList {
 		this.tail = tail;
 	}
 
+	@Override
+	public String toString() {
+		if(this.tail == null){
+			return "LabelLocationList[" + head.toString() + "]";
+		} else {
+			return "LabelLocationList[" + head.toString() + ", " + tail.toString() + "]";
+		}
+	}
 }

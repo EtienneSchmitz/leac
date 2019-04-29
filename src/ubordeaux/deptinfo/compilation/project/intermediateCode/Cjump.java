@@ -1,11 +1,13 @@
 package ubordeaux.deptinfo.compilation.project.intermediateCode;
 
+import ubordeaux.deptinfo.compilation.project.main.Relation_Operator;
+
 public class Cjump extends Stm {
-	private int relop;
+	private Relation_Operator relop;
 	private Exp left, right;
 	private LabelLocation iftrue, iffalse;
 
-	public Cjump(int relop, Exp left, Exp right, LabelLocation iftrue, LabelLocation iffalse) {
+	public Cjump(Relation_Operator relop, Exp left, Exp right, LabelLocation iftrue, LabelLocation iffalse) {
 		super();
 		this.relop = relop;
 		this.left = left;
@@ -14,7 +16,7 @@ public class Cjump extends Stm {
 		this.iffalse = iffalse;
 	}
 
-	public final static int EQ = 0, NE = 1, LT = 2, GT = 3, LE = 4, GE = 5, ULT = 6, ULE = 7, UGT = 8, UGE = 9;
+	private final static int EQ = 0, NE = 1, LT = 2, GT = 3, LE = 4, GE = 5, ULT = 6, ULE = 7, UGT = 8, UGE = 9;
 
 	public static int notRel(int relop) {
 		switch (relop) {
@@ -41,5 +43,10 @@ public class Cjump extends Stm {
 		default:
 			throw new Error("bad relop in CJUMP.notRel");
 		}
+	}
+
+    @Override
+    public String toString() {
+        return "Cjump" + "(" + relop.toString() + ", " + this.left.toString() + ", " + this.right.toString() + ", " + this.iffalse.toString() + ", " + this.iftrue + ")" ;
 	}
 }

@@ -1,5 +1,9 @@
 package ubordeaux.deptinfo.compilation.project.node;
 
+import ubordeaux.deptinfo.compilation.project.intermediateCode.*;
+import ubordeaux.deptinfo.compilation.project.main.Operator;
+import ubordeaux.deptinfo.compilation.project.main.Relation_Operator;
+
 public final class NodeIf extends Node {
 
 	public NodeIf(Node boolExp, Node stm) {
@@ -42,4 +46,29 @@ public final class NodeIf extends Node {
 		return this.get(1);
 	}
 
+	@Override
+	public IntermediateCode generateIntermediateCode() {
+		// Generate intermediate code of the operator, then and else.
+		Exp e = ((NodeRel) this.getExpNode()).generateIntermediateCode();
+
+		Stm stm_then = (Stm) this.getThenNode().generateIntermediateCode();
+
+		Stm stm_else = null;
+		if(this.getElseNode() != null) {
+			stm_else = (Stm) this.getElseNode().generateIntermediateCode();
+		}
+
+		// Create the Label Location.
+		LabelLocation lb_true = new LabelLocation(), lb_false = new LabelLocation(), lb_continue = new LabelLocation();
+
+		// Create the conditional ( operator is equal to true ?)
+		Cjump conditional_test = new Cjump(Relation_Operator.EQ, e, new Const(1), lb_true, lb_false);
+
+		// Create the seq to modularize the code.
+		Seq st_else = new Seq(new Label(lb_false), new Seq(stm_else, new Label(lb_continue)));
+		Seq st_then_else  = new Seq(new Label(lb_true), new Seq(stm_then, new Seq(new Jump(lb_continue), st_else)));
+
+		// Return the sequence.
+		return new Seq(conditional_test, st_then_else);
+	}
 }
