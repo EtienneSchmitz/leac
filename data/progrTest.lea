@@ -1,7 +1,10 @@
 var
-d : array [ 1 .. 10 ] of string;
+a : integer;
 
 begin
-    d[1]="B";
-    d[2]="B";
+a=100;
+while (a >= 0 && a<=100) do
+	begin
+	    a = a - 1;
+    end
 end

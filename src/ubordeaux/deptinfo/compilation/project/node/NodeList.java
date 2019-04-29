@@ -1,5 +1,7 @@
 package ubordeaux.deptinfo.compilation.project.node;
 
+import ubordeaux.deptinfo.compilation.project.intermediateCode.IntermediateCode;
+
 import java.util.Iterator;
 
 public final class NodeList extends Node {
@@ -42,4 +44,14 @@ public final class NodeList extends Node {
 		return node;
 	}
 
+	@Override
+	public IntermediateCode generateIntermediateCode() {
+
+		for(Node elt: this.elts) {
+			IntermediateCode result = elt.generateIntermediateCode();
+			System.out.println(result.toString());
+		}
+
+		return null;
+	}
 }

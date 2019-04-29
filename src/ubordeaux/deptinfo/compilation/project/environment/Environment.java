@@ -11,8 +11,9 @@ public class Environment<KEY, VALUE> {
 		map = new HashMap<>();
 	}
 	
-	public void add(KEY name, VALUE type) {
-		map.put(name, type);
+	public void add(KEY name, VALUE value) {
+		System.out.println("Add to env : " + name + " --> " + value);
+		map.put(name, value);
 	}
 	
 	public VALUE get(KEY name) {

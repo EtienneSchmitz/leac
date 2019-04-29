@@ -951,7 +951,7 @@ class ScannerLea extends Scanner {
             // fall through
           case 106: break;
           case 43: 
-            { return createSymbol(Terminals.TOKEN_TRUE);
+            { return createSymbol(Terminals.TOKEN_TRUE, true);
             } 
             // fall through
           case 107: break;
@@ -986,7 +986,7 @@ class ScannerLea extends Scanner {
             // fall through
           case 113: break;
           case 50: 
-            { return createSymbol(Terminals.TOKEN_FALSE);
+            { return createSymbol(Terminals.TOKEN_FALSE,false);
             } 
             // fall through
           case 114: break;

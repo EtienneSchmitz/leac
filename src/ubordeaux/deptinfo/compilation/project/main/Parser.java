@@ -569,7 +569,7 @@ public class Parser extends beaver.Parser {
 					final NodeExp e1 = (NodeExp) _symbol_e1.value;
 					final Symbol _symbol_e2 = _symbols[offset + 3];
 					final NodeExp e2 = (NodeExp) _symbol_e2.value;
-					 return new NodeOp("plus",e1, e2);
+					 return new NodeOp(Operator.PLUS,e1, e2);
 				}
 			},
 			new Action() {	// [95] expression = expression.e1 TOKEN_MINUS expression.e2
@@ -578,7 +578,7 @@ public class Parser extends beaver.Parser {
 					final NodeExp e1 = (NodeExp) _symbol_e1.value;
 					final Symbol _symbol_e2 = _symbols[offset + 3];
 					final NodeExp e2 = (NodeExp) _symbol_e2.value;
-					 return new NodeOp("minus",e1, e2);
+					 return new NodeOp(Operator.MINUS,e1, e2);
 				}
 			},
 			new Action() {	// [96] expression = expression.e1 TOKEN_TIMES expression.e2
@@ -587,7 +587,7 @@ public class Parser extends beaver.Parser {
 					final NodeExp e1 = (NodeExp) _symbol_e1.value;
 					final Symbol _symbol_e2 = _symbols[offset + 3];
 					final NodeExp e2 = (NodeExp) _symbol_e2.value;
-					 return new NodeOp("times",e1, e2);
+					 return new NodeOp(Operator.TIMES,e1, e2);
 				}
 			},
 			new Action() {	// [97] expression = expression.e1 TOKEN_DIV expression.e2
@@ -596,14 +596,14 @@ public class Parser extends beaver.Parser {
 					final NodeExp e1 = (NodeExp) _symbol_e1.value;
 					final Symbol _symbol_e2 = _symbols[offset + 3];
 					final NodeExp e2 = (NodeExp) _symbol_e2.value;
-					 return new NodeOp("division",e1, e2);
+					 return new NodeOp(Operator.DIVIDE, e1, e2);
 				}
 			},
 			new Action() {	// [98] expression = TOKEN_MINUS expression.e
 				public Symbol reduce(Symbol[] _symbols, int offset) {
 					final Symbol _symbol_e = _symbols[offset + 2];
 					final NodeExp e = (NodeExp) _symbol_e.value;
-					 return new NodeOp("minus",e);
+					 return new NodeOp(Operator.MINUS,e);
 				}
 			},
 			new Action() {	// [99] expression = expression.e1 TOKEN_OR expression.e2
@@ -719,7 +719,7 @@ public class Parser extends beaver.Parser {
 				public Symbol reduce(Symbol[] _symbols, int offset) {
 					final Symbol _symbol_literal = _symbols[offset + 1];
 					final Boolean literal = (Boolean) _symbol_literal.value;
-					 return new NodeLiteral(new TypeBoolean(), literal);
+					 debug(literal); return new NodeLiteral(new TypeBoolean(), literal);
 				}
 			},
 			new Action() {	// [115] literal = TOKEN_FALSE.literal

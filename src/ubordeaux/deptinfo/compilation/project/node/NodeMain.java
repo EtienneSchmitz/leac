@@ -53,4 +53,11 @@ public class NodeMain extends Node {
 				            getStatements());
 	}
 
+	@Override
+	public boolean checksType() {
+		return getStatements().checksType();
+	}
+	
+	
+
 }

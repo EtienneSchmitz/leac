@@ -40,4 +40,8 @@ public class NodeFunction extends Node {
 		return new NodeFunction(getDeclaration(), getDefinition());
 	}
 
+	@Override
+	public String toString() {
+		return "NodeFunction(" + getDeclaration().getName() + ", " + (isDefined() ? getDefinition().toString() : "Not defined");
+	}
 }

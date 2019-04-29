@@ -241,8 +241,8 @@ Boolean							= "boolean"
 	{SwitchStatement_CaseIdentifier}		{ return createSymbol(Terminals.TOKEN_CASE); 							}
 	{SwitchStatement_DefaultCase}			{ return createSymbol(Terminals.TOKEN_DEFAULT); 							}
 	
-	{TrueBoolean}							{ return createSymbol(Terminals.TOKEN_TRUE); 							}
-	{FalseBoolean}							{ return createSymbol(Terminals.TOKEN_FALSE); 							}
+	{TrueBoolean}							{ return createSymbol(Terminals.TOKEN_TRUE, true); 							}
+	{FalseBoolean}							{ return createSymbol(Terminals.TOKEN_FALSE,false); 							}
 	
 	{NullPointer}							{ return createSymbol(Terminals.TOKEN_NULL); 							}
 	

@@ -1,5 +1,6 @@
 package ubordeaux.deptinfo.compilation.project.node;
 
+import ubordeaux.deptinfo.compilation.project.intermediateCode.*;
 import ubordeaux.deptinfo.compilation.project.type.Type;
 
 public final class NodeId extends NodeExp {
@@ -33,5 +34,12 @@ public final class NodeId extends NodeExp {
 
 	public String getName() {
 		return name;
+	}
+
+	@Override
+	public Exp generateIntermediateCode() {
+		LabelLocation label_location = new LabelLocation(this.name);
+		Name name_id = new Name(label_location);
+		return new Mem(name_id);
 	}
 }
