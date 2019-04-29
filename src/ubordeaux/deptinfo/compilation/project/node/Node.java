@@ -36,6 +36,10 @@ public abstract class Node extends ClonableSymbol implements NodeInterface {
 			ret += '(';
 		boolean first = true;
 		for (Node elt : this.elts) {
+			if(elt == null) {
+				System.out.println("Null element in " + this.getClass() + " : " + this.getId());
+				continue;
+			}
 			if (first)
 				first = false;
 			else

@@ -45,7 +45,7 @@
 		<java classname="ubordeaux.deptinfo.compilation.project.main.Main" classpath="bin" classpathref="beaverclasspath" output="data/output">
 			<arg value="-checkType" />
 			<!--<arg value="data/test_program/test_enum.lea" />-->
-			<arg value="data/progrTest.lea" />
+			<arg value="data/progr5.lea" />
 			<!--<arg value="data/progr9.lea" />
 			<arg value="data/progr2.lea" />-->
 		</java>
