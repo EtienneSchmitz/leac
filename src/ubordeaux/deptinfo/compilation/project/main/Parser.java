@@ -612,7 +612,7 @@ public class Parser extends beaver.Parser {
 					final NodeExp e1 = (NodeExp) _symbol_e1.value;
 					final Symbol _symbol_e2 = _symbols[offset + 3];
 					final NodeExp e2 = (NodeExp) _symbol_e2.value;
-					 return new NodeRel("or", e1, e2);
+					 return new NodeRel(Relation_Operator.OR, e1, e2);
 				}
 			},
 			new Action() {	// [100] expression = expression.e1 TOKEN_AND expression.e2
@@ -621,14 +621,14 @@ public class Parser extends beaver.Parser {
 					final NodeExp e1 = (NodeExp) _symbol_e1.value;
 					final Symbol _symbol_e2 = _symbols[offset + 3];
 					final NodeExp e2 = (NodeExp) _symbol_e2.value;
-					 return new NodeRel("and", e1, e2);
+					 return new NodeRel(Relation_Operator.AND, e1, e2);
 				}
 			},
 			new Action() {	// [101] expression = TOKEN_NOT expression.e
 				public Symbol reduce(Symbol[] _symbols, int offset) {
 					final Symbol _symbol_e = _symbols[offset + 2];
 					final NodeExp e = (NodeExp) _symbol_e.value;
-					 return new NodeRel("not", e);
+					 return new NodeRel(Relation_Operator.NOT, e);
 				}
 			},
 			new Action() {	// [102] expression = expression.e1 TOKEN_LT expression.e2
@@ -637,7 +637,7 @@ public class Parser extends beaver.Parser {
 					final NodeExp e1 = (NodeExp) _symbol_e1.value;
 					final Symbol _symbol_e2 = _symbols[offset + 3];
 					final NodeExp e2 = (NodeExp) _symbol_e2.value;
-					 return new NodeRel("lesser_than", e1, e2);
+					 return new NodeRel(Relation_Operator.LT, e1, e2);
 				}
 			},
 			new Action() {	// [103] expression = expression.e1 TOKEN_LE expression.e2
@@ -646,7 +646,7 @@ public class Parser extends beaver.Parser {
 					final NodeExp e1 = (NodeExp) _symbol_e1.value;
 					final Symbol _symbol_e2 = _symbols[offset + 3];
 					final NodeExp e2 = (NodeExp) _symbol_e2.value;
-					 return new NodeRel("lesser_or_equal", e1, e2);
+					 return new NodeRel(Relation_Operator.LE, e1, e2);
 				}
 			},
 			new Action() {	// [104] expression = expression.e1 TOKEN_GT expression.e2
@@ -655,7 +655,7 @@ public class Parser extends beaver.Parser {
 					final NodeExp e1 = (NodeExp) _symbol_e1.value;
 					final Symbol _symbol_e2 = _symbols[offset + 3];
 					final NodeExp e2 = (NodeExp) _symbol_e2.value;
-					 return new NodeRel("greater_than", e1, e2);
+					 return new NodeRel(Relation_Operator.GT, e1, e2);
 				}
 			},
 			new Action() {	// [105] expression = expression.e1 TOKEN_GE expression.e2
@@ -664,7 +664,7 @@ public class Parser extends beaver.Parser {
 					final NodeExp e1 = (NodeExp) _symbol_e1.value;
 					final Symbol _symbol_e2 = _symbols[offset + 3];
 					final NodeExp e2 = (NodeExp) _symbol_e2.value;
-					 return new NodeRel("great_or_equal", e1, e2);
+					 return new NodeRel(Relation_Operator.GE, e1, e2);
 				}
 			},
 			new Action() {	// [106] expression = expression.e1 TOKEN_EQ expression.e2
@@ -673,7 +673,7 @@ public class Parser extends beaver.Parser {
 					final NodeExp e1 = (NodeExp) _symbol_e1.value;
 					final Symbol _symbol_e2 = _symbols[offset + 3];
 					final NodeExp e2 = (NodeExp) _symbol_e2.value;
-					 return new NodeRel("equal", e1, e2);
+					 return new NodeRel(Relation_Operator.EQ, e1, e2);
 				}
 			},
 			new Action() {	// [107] expression = expression.e1 TOKEN_NE expression.e2
@@ -682,7 +682,7 @@ public class Parser extends beaver.Parser {
 					final NodeExp e1 = (NodeExp) _symbol_e1.value;
 					final Symbol _symbol_e2 = _symbols[offset + 3];
 					final NodeExp e2 = (NodeExp) _symbol_e2.value;
-					 return new NodeRel("not_equal", e1, e2);
+					 return new NodeRel(Relation_Operator.NEQ, e1, e2);
 				}
 			},
 			new Action() {	// [108] expression = TOKEN_LPAR expression.e TOKEN_RPAR
