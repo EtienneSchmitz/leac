@@ -94,6 +94,9 @@
 %typeof case_default = "NodeCase";
 %typeof procedure_definition_list, procedure_definition_part = "NodeList"; 
 %typeof procedure_definition = "NodeFunction";
+%typeof feature_type = "TypeFeature";
+%typeof feature_list_type = "TypeFeatureList";
+%typeof structure_type = "TypeStruct";
 %typeof procedure_definition_head = "TypeFunct";
 %typeof procedure_declaration_head = "TypeFunct";
 %typeof procedure_head = "TypeFunct";
@@ -207,16 +210,16 @@ pointer_type=
 	;
 
 structure_type=
-	TOKEN_STRUCT TOKEN_LBRACE feature_list_type TOKEN_RBRACE
+	TOKEN_STRUCT TOKEN_LBRACE feature_list_type.struct TOKEN_RBRACE {:return new TypeStruct(struct);:}
 	;
 
 feature_list_type=
-	feature_list_type feature_type
-	| feature_type
+	feature_list_type.list feature_type.elm	{:list.add(elm);return list;:}
+	| feature_type.elm						{:return new TypeFeatureList(elm);:}
 	;
 
 feature_type=
-	TOKEN_IDENTIFIER TOKEN_COLON type TOKEN_SEMIC
+	TOKEN_IDENTIFIER.name TOKEN_COLON type.type TOKEN_SEMIC {:return new TypeFeature(name,type);:}
 	;
 
 variable_declaration_part=
