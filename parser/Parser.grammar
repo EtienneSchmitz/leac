@@ -1,0 +1,443 @@
+%package "ubordeaux.deptinfo.compilation.project.main";
+
+%class "Parser";
+
+%import "ubordeaux.deptinfo.compilation.project.node.*";
+%import "ubordeaux.deptinfo.compilation.project.type.*";
+%import "ubordeaux.deptinfo.compilation.project.environment.*";
+%import "java.util.ArrayList";
+%import "java.util.Iterator";
+
+%embed {:
+	static class Events extends beaver.Parser.Events {
+		public void syntaxError(Symbol token) {
+			System.err.format("*** Erreur de syntaxe en ligne %d, colonne %d. Token inattendu: %s\n",
+				Symbol.getLine(token.getStart()),
+				Symbol.getColumn(token.getStart()),
+				Terminals.NAMES[token.getId()]);
+		}
+	}
+
+	public void semanticError(String msg, Symbol token) {
+			System.err.format("*** " + msg + " ligne %d, colonne %d\n",
+				Symbol.getLine(token.getStart()),
+				Symbol.getColumn(token.getStart()));
+	}
+
+	public void debug(Object msg) {
+        System.out.println(msg);
+    }
+
+	//private Environment typeEnvironment = new Environment("types");
+	private TypeEnvironment typeEnv = new TypeEnvironment();
+	private FunctionEnvironment funcEnv = new FunctionEnvironment();
+	private StackEnvironment stackEnv = new StackEnvironment();
+	private String type_declaration_name;
+:};
+
+%init {:
+	report = new Events();
+:};
+
+// KEYWORDS
+%terminals TOKEN_TYPE, TOKEN_STRING, TOKEN_INTEGER, TOKEN_BOOLEAN, TOKEN_ARRAY, TOKEN_OF, TOKEN_STRUCT;
+%terminals TOKEN_VAR, TOKEN_PROCEDURE, TOKEN_FUNCTION, TOKEN_BEGIN, TOKEN_END, TOKEN_NEW, TOKEN_DISPOSE;
+%terminals TOKEN_PRINTLN, TOKEN_READLN, TOKEN_RETURN, TOKEN_IF, TOKEN_THEN, TOKEN_ELSE, TOKEN_WHILE, TOKEN_DO;
+%terminals TOKEN_SWITCH, TOKEN_CASE, TOKEN_DEFAULT;
+
+// PONCTS
+%terminals TOKEN_SEMIC, TOKEN_DOTDOT, TOKEN_COLON, TOKEN_COMMA;
+%terminals TOKEN_LPAR, TOKEN_RPAR, TOKEN_LBRACKET, TOKEN_RBRACKET, TOKEN_LBRACE, TOKEN_RBRACE;
+
+// OPERATORS
+%terminals TOKEN_AFF, TOKEN_CIRC;
+%terminals TOKEN_PLUS, TOKEN_MINUS, TOKEN_TIMES, TOKEN_DIV;
+%terminals TOKEN_AND, TOKEN_OR, TOKEN_NOT;
+%terminals TOKEN_LT, TOKEN_LE, TOKEN_GT, TOKEN_GE, TOKEN_EQ, TOKEN_NE;
+
+// LITERALS
+%terminals TOKEN_IDENTIFIER, TOKEN_LIT_INTEGER, TOKEN_LIT_STRING, TOKEN_TRUE, TOKEN_FALSE, TOKEN_NULL;
+
+//PRIORITY
+%right PRIORMAX;
+%right TOKEN_CIRC;
+%left TOKEN_TIMES,TOKEN_DIV;
+%left TOKEN_PLUS,TOKEN_MINUS;
+%left TOKEN_NOT;
+%left TOKEN_LT,TOKEN_LE,TOKEN_GT,TOKEN_GE,TOKEN_EQ,TOKEN_NE;
+%left TOKEN_AND;
+%left TOKEN_OR;
+%left TOKEN_ELSE;
+%left TOKEN_IF;
+
+// Types
+%typeof type_declaration_head = "TypeNamed";
+%typeof block = "NodeList";
+%typeof variable_declaration, variable_declaration_list, variable_declaration_part = "NodeList";
+%typeof expression_part = "NodeList";
+%typeof expression_list = "NodeList";
+%typeof expression = "NodeExp";
+%typeof statement_list = "NodeList";
+%typeof variable_access = "NodeExp";
+%typeof statement, simple_statement = "Node";
+%typeof type = "Type";
+%typeof assignment_statement = "NodeAssign";
+%typeof TOKEN_IDENTIFIER, TOKEN_LIT_STRING, TOKEN_READLN, TOKEN_PRINTLN = "String";
+%typeof TOKEN_LIT_INTEGER = "Integer";
+%typeof TOKEN_TRUE, TOKEN_FALSE = "Boolean";
+%typeof TOKEN_NULL = "Object";
+%typeof identifier_list = "IdentifierList";
+%typeof while_statement= "NodeWhile";
+%typeof switch_statement= "NodeSwitch";
+%typeof case_statement_list = "NodeList";
+%typeof case_statement = "NodeCaseList";
+%typeof case_default = "NodeCase";
+%typeof procedure_definition = "TypeFunct";
+%typeof feature_type = "TypeFeature";
+%typeof feature_list_type = "TypeFeatureList";
+%typeof structure_type = "TypeStruct";
+%typeof procedure_definition_head = "TypeFunct";
+%typeof procedure_declaration_head = "TypeFunct";
+%typeof procedure_head = "TypeFunct";
+%typeof argt_part = "TypeTuple";
+%typeof argt_list = "NodeList";
+%typeof argt = "NodeId";
+%typeof procedure_expression, procedure_statement = "NodeCallFct";
+%typeof subrange_type = "TypeArrayRange";
+%typeof array_type = "TypeArray";
+%typeof range_type = "TypeRange";
+%typeof init_enumerated_type = "TypeEnumRange";
+%typeof return_statement= "NodeReturn";
+
+%goal program;
+
+/***
+* Semantique A completer
+*
+* Quelques astuces:
+*
+* a) ne mettez jamais de lettres accentuees, Beaver ne fonctionnerait pas
+*
+* b) quand vous souhaitez mettre du code avant la fin de la regle,
+*     X= A {: je voudrais mettre du code ici :} B {: pour l'exploiter ici :}
+* utilisez une rege vide comme ceci:
+*
+*     X= A empty_X B {: pour l'exploiter ici  :} ;
+*     empty_X= {: je voudrais mettre du code ici :};
+*
+* c) pour implementer une liste, faites comme ceci:
+* xxx_list=
+*	xxx_list.list xxx.elt {: list.add(elt); return list; :}
+*	| xxx.elt {: MyList list = new MyList(); list.add(elt); return list; :}
+*	;
+*
+***/
+
+program=
+	type_declaration_part
+	variable_declaration_part.var
+	procedure_definition_part
+	TOKEN_BEGIN
+	statement_list.stm
+	TOKEN_END               {: stackEnv.closeCurrentScope(); return new NodeMain(typeEnv, var, funcEnv, stm); :}
+	;
+
+type_declaration_part=
+	/* empty */
+	| TOKEN_TYPE type_declaration_list
+	;
+
+type_declaration_list=
+	type_declaration_list type_declaration
+	| type_declaration
+	;
+
+type_declaration=
+	type_declaration_head.name TOKEN_AFF type.t TOKEN_SEMIC	{: typeEnv.add(name.getName(), t); return t; :}
+	;
+
+type_declaration_head=
+	TOKEN_IDENTIFIER.id		{: return new TypeNamed(id); :}
+	;
+
+type=
+	simple_type
+	| named_type
+	| index_type
+	| array_type
+	| pointer_type
+	| structure_type
+	;
+
+simple_type=
+	TOKEN_STRING 	{: return new TypeString(); :}
+	| TOKEN_INTEGER {: return new TypeInt(); :}
+	| TOKEN_BOOLEAN	{: return new TypeBoolean(); :}
+	;
+
+named_type=
+	TOKEN_IDENTIFIER
+	;
+
+index_type=
+	enumerated_type
+	| subrange_type
+	;
+
+enumerated_type=
+	init_enumerated_type.enume TOKEN_LPAR identifier_list.list TOKEN_RPAR {:int i=0; 	
+																		for(String s : list){ 
+																		 	i++; 
+																		 }
+																		 enume.setFirst(new TypeItemEnum(0,list.first()));
+																		 enume.setLast(new TypeItemEnum(i,list.last()));
+																		 return enume; :}
+	;
+
+init_enumerated_type=			{:return new TypeEnumRange();:}
+	;
+
+subrange_type=
+	TOKEN_LIT_INTEGER.int1 TOKEN_DOTDOT TOKEN_LIT_INTEGER.int2  {: return new TypeArrayRange(new TypeInt(int1),new TypeInt(int2)); :}
+	| TOKEN_IDENTIFIER TOKEN_DOTDOT TOKEN_IDENTIFIER
+	;
+
+array_type=
+	TOKEN_ARRAY TOKEN_LBRACKET range_type.rangetype TOKEN_RBRACKET TOKEN_OF type.type {: return new TypeArray(rangetype,type); :}
+	;
+
+range_type=
+	enumerated_type
+	| subrange_type
+	| named_type
+	;
+
+pointer_type=
+	TOKEN_CIRC type.t						{: return new TypePointer(t); :}
+	;
+
+structure_type=
+	TOKEN_STRUCT TOKEN_LBRACE feature_list_type.struct TOKEN_RBRACE {:return new TypeStruct(struct);:}
+	;
+
+feature_list_type=
+	feature_list_type.list feature_type.elm	{:list.add(elm);return list;:}
+	| feature_type.elm						{:return new TypeFeatureList(elm);:}
+	;
+
+feature_type=
+	TOKEN_IDENTIFIER.name TOKEN_COLON type.type TOKEN_SEMIC {:return new TypeFeature(name,type);:}
+	;
+
+variable_declaration_part=
+	/* empty */																{: NodeList list = new NodeList(); stackEnv.addToCurrentScope(list); return list;:}
+	| TOKEN_VAR variable_declaration_list.list								{: stackEnv.addToCurrentScope(list); return list; :}
+	;
+
+variable_declaration_list=
+	variable_declaration_list.global_list variable_declaration.list			{: Iterator<Node> it = list.iterator(); while(it.hasNext()) global_list.add(it.next()); return global_list; :}
+	| variable_declaration.list												{: return list; :}
+	;
+
+variable_declaration=
+	identifier_list.list TOKEN_COLON type.type TOKEN_SEMIC 	{: NodeList nodeList = new NodeList(); 
+															   for(String id : list) nodeList.add(new NodeId(id, type));	 
+															   return nodeList; :}
+	;
+
+identifier_list=
+	identifier_list.list TOKEN_COMMA TOKEN_IDENTIFIER.id {: list.add(id); return list; :}
+	| TOKEN_IDENTIFIER.id                                {: IdentifierList list = new IdentifierList(); list.add(id); return list; :}
+	;
+
+procedure_definition_part=
+	| procedure_definition_list						
+	;
+
+procedure_definition_list=
+	procedure_definition_list procedure_definition		
+	| procedure_definition									
+	;
+
+procedure_definition=
+	procedure_definition_head.decl block.def			{: funcEnv.get(decl.getName()).setDefinition(def); stackEnv.closeCurrentScope(); return decl; :}
+	| procedure_declaration_head.decl TOKEN_SEMIC		{: return decl; :}
+	;
+
+procedure_definition_head=
+	procedure_head.decl		{: NodeFunction function = new NodeFunction(decl, null); funcEnv.add(decl.getName(), function);
+							   return decl;	:}
+	;
+
+procedure_declaration_head=
+	procedure_head.decl		{: NodeFunction function = new NodeFunction(decl, null); funcEnv.add(function.getDeclaration().getName(), function);
+							   return decl; 	:}
+	;
+
+procedure_head=
+	TOKEN_PROCEDURE TOKEN_IDENTIFIER.id TOKEN_LPAR argt_part.args TOKEN_RPAR								{: return new TypeFunct(id, args, new TypeVoid());		:}
+	| TOKEN_FUNCTION TOKEN_IDENTIFIER.id TOKEN_LPAR argt_part.args TOKEN_RPAR TOKEN_COLON type.ret_type		{: return new TypeFunct(id, args, ret_type);			:}
+	;
+
+argt_part=
+	/* empty */												{: stackEnv.addNewScope(new NodeList(), false); return new TypeTuple(); :}
+	| argt_list.list										{: stackEnv.addNewScope(list, false); // Registers identifiers.
+															   TypeTuple tuple = new TypeTuple(); // Creates the TypeList
+															   Iterator<Node> it = list.iterator();
+															   while(it.hasNext()) tuple.add(new TypeFeature("", ((NodeId)it.next()).getType()));
+															   return tuple; :}
+	;
+
+argt_list=
+	argt_list.list TOKEN_COMMA argt.node					{: list.add(node); return list;	:}						
+	| argt.node												{: return new NodeList(node);   :}					
+	;
+
+argt=
+	TOKEN_IDENTIFIER.id TOKEN_COLON type.t					{: return new NodeId(id, t); :}
+	;
+
+block=
+	variable_declaration_part
+	TOKEN_BEGIN
+	statement_list.stm 
+	TOKEN_END {: return stm; :}
+	;
+
+statement_list=
+	statement_list.list statement.elt           {: list.add(elt); return list; :}
+	| statement.elt                             {: NodeList list = new NodeList(); list.add(elt); return list; :}
+	;
+
+statement=
+	simple_statement
+	| structured_statement
+	;
+
+simple_statement=
+	assignment_statement
+	| procedure_statement.n
+	| new_statement
+	| dispose_statement
+	| println_statement
+	| readln_statement
+	| return_statement
+	;
+
+assignment_statement=
+	variable_access.var TOKEN_AFF expression.expr TOKEN_SEMIC       {: return new NodeAssign(var, expr); :}
+	;
+
+procedure_statement=
+	procedure_expression.n TOKEN_SEMIC
+	;
+
+procedure_expression=
+	TOKEN_IDENTIFIER.id TOKEN_LPAR expression_part.args TOKEN_RPAR			{: TypeFunct decl = funcEnv.get(id).getDeclaration();																			   
+																			   return new NodeCallFct(id, decl, args); :}
+	;
+
+expression_part=
+	/* empty */											{: return new NodeList(); :}
+	| expression_list.list								{: return list; :}
+	;
+
+expression_list=
+	expression_list.list TOKEN_COMMA expression.e	{: list.add(e); return list; :}
+	| expression.e									{: return new NodeList(e); :}
+	;
+
+new_statement=
+	TOKEN_NEW variable_access.n TOKEN_SEMIC			{: return new NodeNew(n); :}
+	;
+
+dispose_statement=
+	TOKEN_DISPOSE variable_access.n TOKEN_SEMIC		{: return new NodeDispose(n); :}
+	;
+
+println_statement=
+	TOKEN_PRINTLN.id expression.e TOKEN_SEMIC	{: return new NodeCallFct(id, 
+																new TypeFunct(id, new TypeTuple(new TypeFeature("e", e.getType())), new TypeVoid()),
+																new NodeList(e));
+												:}
+	;
+
+readln_statement=
+	TOKEN_READLN.id expression.e TOKEN_SEMIC			{: return new NodeCallFct(id, 
+																new TypeFunct(id, new TypeTuple(new TypeFeature("e", e.getType())), new TypeString()),
+																new NodeList(e));
+												:}
+	;
+
+return_statement=
+	TOKEN_RETURN expression.e TOKEN_SEMIC         {: return new NodeReturn(e); :}
+	;
+
+structured_statement=
+	block
+	| if_statement
+	| while_statement
+	| switch_statement
+	;
+
+if_statement=
+	TOKEN_IF expression.expr TOKEN_THEN statement.stm                                           {: return new NodeIf(expr, stm); :}
+	| TOKEN_IF expression.expr TOKEN_THEN statement.stm1 TOKEN_ELSE statement.stm2              {: return new NodeIf(expr, stm1,stm2); :}
+	;
+
+while_statement=
+	TOKEN_WHILE expression.expr TOKEN_DO statement.stm                                          {: return new NodeWhile(expr, stm); :}
+	;
+
+switch_statement=
+	TOKEN_SWITCH expression.expr TOKEN_BEGIN case_statement_list.stm TOKEN_END  {: return new NodeSwitch(expr, stm); :}
+	;
+
+case_statement_list=
+	case_statement_list.list case_statement.elt case_default.dft                {: list.add(elt); list.add(dft); return list; :}
+	| case_statement.elt                                                        {: NodeList list = new NodeList(); list.add(elt); return list; :}
+	;
+
+case_statement=
+	TOKEN_CASE identifier_list.idlist TOKEN_COLON statement.stm                 {: NodeCaseList list = new NodeCaseList(); for(String id : idlist){list.add(new NodeCase(id,stm));} return list; :}
+	;
+
+case_default=
+	/* empty */                                                                 {: return new NodeCase(null); :}
+	| TOKEN_DEFAULT TOKEN_COLON statement.stm                                   {: return new NodeCase(stm); :}
+	; // Change
+
+variable_access=
+	TOKEN_IDENTIFIER.id                                            {: System.out.println("Asked for " + id + "."); return stackEnv.get(id); :}
+	| variable_access.id TOKEN_LBRACKET expression.exp TOKEN_RBRACKET {: return new NodeArrayAccess(id,exp); :}
+	| expression.e TOKEN_CIRC										  {: return new NodePtrAccess(e); :}
+	;
+
+expression=
+	expression.e1 TOKEN_PLUS expression.e2						   	{: return new NodeOp(Operator.PLUS,e1, e2); :}
+	| expression.e1 TOKEN_MINUS expression.e2						{: return new NodeOp(Operator.MINUS,e1, e2); :}
+	| expression.e1 TOKEN_TIMES expression.e2						{: return new NodeOp(Operator.TIMES,e1, e2); :}
+	| expression.e1 TOKEN_DIV expression.e2							{: return new NodeOp(Operator.DIVIDE, e1, e2); :}
+	| TOKEN_MINUS expression.e  @PRIORMAX                           {: return new NodeOp(Operator.MINUS,e); :}
+	| expression.e1 TOKEN_OR expression.e2							{: return new NodeRel(Relation_Operator.OR, e1, e2); :}
+	| expression.e1 TOKEN_AND expression.e2							{: return new NodeRel(Relation_Operator.AND, e1, e2); :}
+	| TOKEN_NOT expression.e                                        {: return new NodeRel(Relation_Operator.NOT, e); :}
+	| expression.e1 TOKEN_LT expression.e2							{: return new NodeRel(Relation_Operator.LT, e1, e2); :}
+	| expression.e1 TOKEN_LE expression.e2							{: return new NodeRel(Relation_Operator.LE, e1, e2); :}
+	| expression.e1 TOKEN_GT expression.e2							{: return new NodeRel(Relation_Operator.GT, e1, e2); :}
+	| expression.e1 TOKEN_GE expression.e2 						   	{: return new NodeRel(Relation_Operator.GE, e1, e2); :}
+	| expression.e1 TOKEN_EQ expression.e2							{: return new NodeRel(Relation_Operator.EQ, e1, e2); :}
+	| expression.e1 TOKEN_NE expression.e2							{: return new NodeRel(Relation_Operator.NEQ, e1, e2); :}
+	| TOKEN_LPAR expression.e TOKEN_RPAR                            {: return e; :}
+	| procedure_expression.funcCall									{: return funcCall; :}
+	| variable_access
+	| literal
+	;
+
+literal=
+	TOKEN_LIT_INTEGER.literal       {: return new NodeLiteral(new TypeInt(literal), literal); :}
+	| TOKEN_LIT_STRING.literal      {: return new NodeLiteral(new TypeString(), literal); :}
+	| TOKEN_TRUE.literal            {: debug(literal); return new NodeLiteral(new TypeBoolean(), literal); :}
+	| TOKEN_FALSE.literal           {: return new NodeLiteral(new TypeBoolean(), literal); :}
+	| TOKEN_NULL.literal            {: return new NodeLiteral(new TypePointer(), literal); :}
+	;

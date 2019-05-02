@@ -1,0 +1,6 @@
+var
+d : array [ 1 .. 10 ] of string;
+
+begin
+    d[2] = "Bonjour";
+end

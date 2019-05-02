@@ -1,0 +1,7 @@
+.idea/
+/bin/
+*.class
+*output
+*Parser.java
+*ScannerLea.java
+*Terminals.java
