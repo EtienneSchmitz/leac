@@ -351,14 +351,14 @@ dispose_statement=
 
 println_statement=
 	TOKEN_PRINTLN.id expression.e TOKEN_SEMIC	{: return new NodeCallFct(id, 
-																new TypeFunct(id, new TypeTuple(e.getType()), new TypeVoid()),
+																new TypeFunct(id, new TypeTuple(new TypeFeature("e", e.getType())), new TypeVoid()),
 																new NodeList(e));
 												:}
 	;
 
 readln_statement=
 	TOKEN_READLN.id expression.e TOKEN_SEMIC			{: return new NodeCallFct(id, 
-																new TypeFunct(id, new TypeTuple(e.getType()), new TypeString()),
+																new TypeFunct(id, new TypeTuple(new TypeFeature("e", e.getType())), new TypeString()),
 																new NodeList(e));
 												:}
 	;
