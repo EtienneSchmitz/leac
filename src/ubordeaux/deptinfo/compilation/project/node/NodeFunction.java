@@ -8,15 +8,10 @@ public class NodeFunction extends Node {
 	private TypeFunct funcDecl;
 	
 	public NodeFunction(TypeFunct funcDecl, NodeList definition) {
-		super();
+		super(definition);
 		this.funcDecl = funcDecl;
 		
-		if(definition != null) {
-			this.add(definition);
-			setDefined(true);
-		} else { 
-			setDefined(false);
-		}
+		setDefined(definition != null);
 	}
 	
 	public TypeFunct getDeclaration() {
@@ -25,6 +20,11 @@ public class NodeFunction extends Node {
 	
 	public NodeList getDefinition() {
 		return (NodeList)this.elts.get(0);
+	}
+	
+	public void setDefinition(NodeList def) {
+		setDefined(def != null);
+		this.elts.set(0, def);
 	}
 	
 	public void setDefined(boolean isDefined) {
