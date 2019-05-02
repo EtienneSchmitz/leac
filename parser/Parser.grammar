@@ -107,6 +107,8 @@
 %typeof array_type = "TypeArray";
 %typeof range_type = "TypeRange";
 %typeof init_enumerated_type = "TypeEnumRange";
+%typeof return_statement= "NodeReturn";
+
 %goal program;
 
 /***
@@ -368,7 +370,7 @@ readln_statement=
 	;
 
 return_statement=
-	TOKEN_RETURN expression TOKEN_SEMIC
+	TOKEN_RETURN expression.e TOKEN_SEMIC         {: return new NodeReturn(e); :}
 	;
 
 structured_statement=

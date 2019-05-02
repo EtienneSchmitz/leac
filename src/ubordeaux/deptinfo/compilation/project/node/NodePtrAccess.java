@@ -1,5 +1,6 @@
 package ubordeaux.deptinfo.compilation.project.node;
 
+import ubordeaux.deptinfo.compilation.project.intermediateCode.*;
 import ubordeaux.deptinfo.compilation.project.type.Type;
 import ubordeaux.deptinfo.compilation.project.type.TypeComplex;
 import ubordeaux.deptinfo.compilation.project.type.TypePointer;
@@ -30,4 +31,10 @@ public final class NodePtrAccess extends NodeExp {
 		return new NodePtrAccess((NodeExp) this.get(0).clone());
 	}
 
+
+	@Override
+	public Exp generateIntermediateCode() {
+		NodeExp e = (NodeExp) this.get(0);
+		return new StmExp(new Move(new Temp(new TempValue()), new Mem(e.generateIntermediateCode())));
+	}
 }

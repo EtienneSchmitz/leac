@@ -93,6 +93,7 @@ public final class NodeCallFct extends NodeExp {
 			Iterator<Node> it = this.getArgs().iterator();
 			while(it.hasNext()) {
 				Node stm = it.next();
+				System.out.println(stm);
 				Exp exp = (Exp) stm.generateIntermediateCode();
 				list = new ExpList(exp, list);
 			}
