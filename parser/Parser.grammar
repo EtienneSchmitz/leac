@@ -346,11 +346,11 @@ expression_list=
 	;
 
 new_statement=
-	TOKEN_NEW variable_access TOKEN_SEMIC
+	TOKEN_NEW variable_access.n TOKEN_SEMIC			{: return new NodeNew(n); :}
 	;
 
 dispose_statement=
-	TOKEN_DISPOSE variable_access TOKEN_SEMIC
+	TOKEN_DISPOSE variable_access.n TOKEN_SEMIC		{: return new NodeDispose(n); :}
 	;
 
 println_statement=
