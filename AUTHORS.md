@@ -7,19 +7,16 @@ SCHMITZ Etienne
 
 ## Authors realization
 
-### GAISSET Valentin
+### Lexer-Analyse Lexicale
 
-- Lexer
+- GAISSET Valentin
 
-### MULLER Xavier
+### Parser-Analyse Syntaxique/Analyse Sémantique
 
-- Lexer
+- GAISSET Valentin
+- PINGET Edgard
 
-### PINGET Edgard
+### Code Intermédiaire
 
-- Parser
-
-### SCHMITZ Etienne
-
-- Prepare the archive
-- Parser
+- MULLER Xavier
+- SCHMITZ Etienne
