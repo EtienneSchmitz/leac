@@ -7,16 +7,16 @@
 
 ## Authors realization
 
-### Lexer-Analyse Lexicale
+### Lexer-Tokenization
 
 - GAISSET Valentin
 
-### Parser-Analyse Syntaxique/Analyse Sémantique
+### Parser-Parsing/Semantic analysis
 
 - GAISSET Valentin
 - PINGET Edgard
 
-### Code Intermédiaire
+### Intermediary Code
 
 - MULLER Xavier
 - SCHMITZ Etienne
