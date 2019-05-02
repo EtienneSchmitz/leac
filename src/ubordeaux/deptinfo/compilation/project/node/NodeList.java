@@ -1,8 +1,6 @@
 package ubordeaux.deptinfo.compilation.project.node;
 
-import ubordeaux.deptinfo.compilation.project.intermediateCode.IntermediateCode;
-import ubordeaux.deptinfo.compilation.project.intermediateCode.Stm;
-import ubordeaux.deptinfo.compilation.project.intermediateCode.StmList;
+import ubordeaux.deptinfo.compilation.project.intermediateCode.*;
 
 import java.util.Iterator;
 
@@ -50,8 +48,12 @@ public final class NodeList extends Node {
 	public StmList generateIntermediateCode() {
 		StmList stm_list = null;
 		for(Node elt: this.elts) {
-			Stm result = (Stm) elt.generateIntermediateCode();
-			stm_list = new StmList(result, stm_list);
+			IntermediateCode result = elt.generateIntermediateCode();
+			if(result instanceof Exp) {
+				stm_list = new StmList(new ExpStm((Exp) result), stm_list);
+			} else if (result instanceof Stm) {
+				stm_list = new StmList((Stm) result, stm_list);
+			}
 		}
 
 		return stm_list;

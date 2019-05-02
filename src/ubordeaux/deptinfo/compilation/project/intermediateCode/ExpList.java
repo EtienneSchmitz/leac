@@ -11,6 +11,14 @@ public class ExpList implements IntermediateCode {
 	}
 
 	@Override
+	public String toString() {
+		if(tail == null)
+			return head.toString();
+		else
+			return head.toString() + "," + tail.toString();
+	}
+
+	@Override
 	public void canonicalTransformation() {
 		// TODO Auto-generated method stub
 		System.err.println("TODO: " + this.getClass().getSimpleName() + ".canonicalTransformation()()");
