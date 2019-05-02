@@ -1,9 +1,9 @@
 ## Authors name
 
-GAISSET Valentin
-MULLER Xavier
-PINGET Edgard
-SCHMITZ Etienne
+-GAISSET Valentin
+-MULLER Xavier
+-PINGET Edgard
+-SCHMITZ Etienne
 
 ## Authors realization
 
