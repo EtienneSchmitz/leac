@@ -1,7 +1,6 @@
 package ubordeaux.deptinfo.compilation.project.node;
 
 import ubordeaux.deptinfo.compilation.project.intermediateCode.*;
-import ubordeaux.deptinfo.compilation.project.main.Operator;
 import ubordeaux.deptinfo.compilation.project.main.Relation_Operator;
 
 public final class NodeIf extends Node {
@@ -60,11 +59,15 @@ public final class NodeIf extends Node {
 		// Create the conditional ( operator is equal to true ?)
 		Cjump conditional_test = new Cjump(Relation_Operator.EQ, e, new Const(1), lb_true, lb_false);
 
-		Stm stm_else = null;
+		IntermediateCode stm_else = null;
 		if(this.getElseNode() != null) {
-			stm_else = (Stm) this.getElseNode().generateIntermediateCode();
+			stm_else = this.getElseNode().generateIntermediateCode();
 
-			Seq st_else = new Seq(new Label(lb_false), new Seq(stm_else, new Label(lb_continue)));
+			if(stm_else instanceof Exp) {
+				stm_else = new ExpStm((Exp) stm_else);
+			}
+
+			Seq st_else = new Seq(new Label(lb_false), new Seq((Stm) stm_else, new Label(lb_continue)));
 			Seq st_then_else  = new Seq(new Label(lb_true), new Seq(stm_then, new Seq(new Jump(lb_continue), st_else)));
 			// Return the sequence.
 			return new Seq(conditional_test, st_then_else);
