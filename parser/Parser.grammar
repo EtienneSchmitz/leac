@@ -107,7 +107,7 @@
 %typeof subrange_type = "TypeArrayRange";
 %typeof array_type = "TypeArray";
 %typeof range_type = "TypeRange";
-
+%typeof init_enumerated_type = "TypeEnumRange";
 %goal program;
 
 /***
@@ -184,10 +184,16 @@ index_type=
 	;
 
 enumerated_type=
-	init_enumerated_type TOKEN_LPAR identifier_list.list TOKEN_RPAR 
+	init_enumerated_type.enume TOKEN_LPAR identifier_list.list TOKEN_RPAR {:int i=0; 	
+																		for(String s : list){ 
+																		 	i++; 
+																		 }
+																		 enume.setFirst(new TypeItemEnum(0,list.first()));
+																		 enume.setLast(new TypeItemEnum(i,list.last()));
+																		 return enume; :}
 	;
 
-init_enumerated_type=
+init_enumerated_type=			{:return new TypeEnumRange();:}
 	;
 
 subrange_type=
