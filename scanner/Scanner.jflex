@@ -225,8 +225,8 @@ Boolean							= "boolean"
 	{DynamicAllocation}						{ return createSymbol(Terminals.TOKEN_NEW); 							}
 	{Deallocation}							{ return createSymbol(Terminals.TOKEN_DISPOSE); 							}
 	
-	{StdWrite}								{ return createSymbol(Terminals.TOKEN_PRINTLN); 							}
-	{StdRead}								{ return createSymbol(Terminals.TOKEN_READLN); 							}
+	{StdWrite}								{ return createSymbol(Terminals.TOKEN_PRINTLN, "println"); 							}
+	{StdRead}								{ return createSymbol(Terminals.TOKEN_READLN, "readln"); 							}
 	
 	{FunctionReturn}						{ return createSymbol(Terminals.TOKEN_RETURN); 							}
 	

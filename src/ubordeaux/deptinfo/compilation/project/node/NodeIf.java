@@ -53,10 +53,6 @@ public final class NodeIf extends Node {
 
 		Stm stm_then = (Stm) this.getThenNode().generateIntermediateCode();
 
-		Stm stm_else = null;
-		if(this.getElseNode() != null) {
-			stm_else = (Stm) this.getElseNode().generateIntermediateCode();
-		}
 
 		// Create the Label Location.
 		LabelLocation lb_true = new LabelLocation(), lb_false = new LabelLocation(), lb_continue = new LabelLocation();
@@ -64,11 +60,18 @@ public final class NodeIf extends Node {
 		// Create the conditional ( operator is equal to true ?)
 		Cjump conditional_test = new Cjump(Relation_Operator.EQ, e, new Const(1), lb_true, lb_false);
 
-		// Create the seq to modularize the code.
-		Seq st_else = new Seq(new Label(lb_false), new Seq(stm_else, new Label(lb_continue)));
-		Seq st_then_else  = new Seq(new Label(lb_true), new Seq(stm_then, new Seq(new Jump(lb_continue), st_else)));
+		Stm stm_else = null;
+		if(this.getElseNode() != null) {
+			stm_else = (Stm) this.getElseNode().generateIntermediateCode();
 
-		// Return the sequence.
-		return new Seq(conditional_test, st_then_else);
+			Seq st_else = new Seq(new Label(lb_false), new Seq(stm_else, new Label(lb_continue)));
+			Seq st_then_else  = new Seq(new Label(lb_true), new Seq(stm_then, new Seq(new Jump(lb_continue), st_else)));
+			// Return the sequence.
+			return new Seq(conditional_test, st_then_else);
+		} else {
+			Seq st_then = new Seq(new Label(lb_true), new Seq(stm_then, new Seq(new Jump(lb_continue),  new Label(lb_continue))));
+
+			return new Seq(conditional_test, st_then);
+		}
 	}
 }
