@@ -69,7 +69,7 @@ public class NodeMain extends Node {
 		
 		for(Map.Entry<String, NodeFunction> pair : getFunctionEnvironment().getAll()) {
 			if(pair.getValue().isDefined()) {
-				list = new StmList((Stm)pair.getValue().generateIntermediateCode(), list);
+				list = new StmList((Stm)pair.getValue().getDefinition().generateIntermediateCode(), list);
 			}
 		}
 		
