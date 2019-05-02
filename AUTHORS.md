@@ -1,25 +1,22 @@
 ## Authors name
 
-GAISSET Valentin
-MULLER Xavier
-PINGET Edgard
-SCHMITZ Etienne
+- GAISSET Valentin
+- MULLER Xavier
+- PINGET Edgard
+- SCHMITZ Etienne
 
 ## Authors realization
 
-### GAISSET Valentin
+### Lexer-Tokenization
 
-- Lexer
+- GAISSET Valentin
 
-### MULLER Xavier
+### Parser-Parsing/Semantic analysis
 
-- Lexer
+- GAISSET Valentin
+- PINGET Edgard
 
-### PINGET Edgard
+### Intermediary Code
 
-- Parser
-
-### SCHMITZ Etienne
-
-- Prepare the archive
-- Parser
+- MULLER Xavier
+- SCHMITZ Etienne
