@@ -4,7 +4,7 @@ package ubordeaux.deptinfo.compilation.project.intermediateCode;
  * A Label represents an address in assembly language.
  */
 
-public class LabelLocation {
+public class LabelLocation extends Exp {
 	private String name;
 	private static int count;
 

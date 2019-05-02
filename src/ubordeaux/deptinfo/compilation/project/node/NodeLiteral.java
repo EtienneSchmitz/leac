@@ -1,7 +1,6 @@
 package ubordeaux.deptinfo.compilation.project.node;
 
-import ubordeaux.deptinfo.compilation.project.intermediateCode.Const;
-import ubordeaux.deptinfo.compilation.project.intermediateCode.Exp;
+import ubordeaux.deptinfo.compilation.project.intermediateCode.*;
 import ubordeaux.deptinfo.compilation.project.type.*;
 
 public final class NodeLiteral extends NodeExp {
@@ -13,6 +12,10 @@ public final class NodeLiteral extends NodeExp {
 		this.type = type;
 		this.value = value;
 		System.out.println(value);
+	}
+
+	public Object getValue() {
+		return value;
 	}
 
 	public String toString() {
@@ -43,6 +46,9 @@ public final class NodeLiteral extends NodeExp {
 			int boolean_choose = (boolean) this.value ? 1 : 0;
 			return new Const(boolean_choose);
  		}
+		else if(this.type instanceof TypeString) {
+			return new LabelLocation((String) this.value);
+		}
 		else {
 			return null;
 		}

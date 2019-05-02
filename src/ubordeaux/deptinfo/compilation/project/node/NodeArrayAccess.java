@@ -1,5 +1,7 @@
 package ubordeaux.deptinfo.compilation.project.node;
 
+import ubordeaux.deptinfo.compilation.project.intermediateCode.*;
+import ubordeaux.deptinfo.compilation.project.main.Operator;
 import ubordeaux.deptinfo.compilation.project.type.TypeRange;
 import ubordeaux.deptinfo.compilation.project.type.TypeItemEnum;
 import ubordeaux.deptinfo.compilation.project.type.Type;
@@ -47,4 +49,21 @@ public final class NodeArrayAccess extends NodeExp {
 		return new NodeArrayAccess((NodeExp) get(0).clone(), (Node) get(1).clone());
 	}
 
+	@Override
+	public Exp generateIntermediateCode() {
+		Type typeArg = ((NodeExp)get(1)).getType();
+		NodeId name = (NodeId) get(0);
+
+		if(typeArg instanceof TypeItemEnum) {
+
+		} else {
+
+			int value = (int) ((NodeLiteral)get(1)).getValue();
+			return new Mem(new Binop(Operator.PLUS, new Name(new LabelLocation(name.getName())), new Const(value* 4)));
+
+			//return memory_access;
+		}
+
+		return null;
+	}
 }
