@@ -82,7 +82,7 @@
 %typeof statement, simple_statement = "Node";
 %typeof type = "Type";
 %typeof assignment_statement = "NodeAssign";
-%typeof TOKEN_IDENTIFIER, TOKEN_LIT_STRING = "String";
+%typeof TOKEN_IDENTIFIER, TOKEN_LIT_STRING, TOKEN_READLN, TOKEN_PRINTLN = "String";
 %typeof TOKEN_LIT_INTEGER = "Integer";
 %typeof TOKEN_TRUE, TOKEN_FALSE = "Boolean";
 %typeof TOKEN_NULL = "Object";
@@ -350,11 +350,17 @@ dispose_statement=
 	;
 
 println_statement=
-	TOKEN_PRINTLN expression TOKEN_SEMIC
+	TOKEN_PRINTLN.id expression.e TOKEN_SEMIC	{: return new NodeCallFct(id, 
+																new TypeFunct(id, new TypeTuple(e.getType()), new TypeVoid()),
+																new NodeList(e));
+												:}
 	;
 
 readln_statement=
-	TOKEN_READLN expression TOKEN_SEMIC
+	TOKEN_READLN.id expression.e TOKEN_SEMIC			{: return new NodeCallFct(id, 
+																new TypeFunct(id, new TypeTuple(e.getType()), new TypeString()),
+																new NodeList(e));
+												:}
 	;
 
 return_statement=
