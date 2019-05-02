@@ -18,7 +18,6 @@ public class Main {
 					Parser parser = new Parser();
 					System.err.println("*** Fichier " + arg);
 					Node result = (Node) parser.parse(input);
-					System.out.println(result.generateIntermediateCode());
 					System.out.println(result.toString());
 					System.err.println("*** Analyse syntaxique ok");
 					if (checksType) {
@@ -27,6 +26,7 @@ public class Main {
 						else
 							System.err.println("*** Typage correct");
 					}
+					System.out.println(result.generateIntermediateCode());
 				} catch (beaver.Parser.Exception e) {
 					System.err.println("*** Erreur de syntaxe: " + arg + ":" + e.getMessage());
 				}

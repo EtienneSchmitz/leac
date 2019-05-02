@@ -1,7 +1,6 @@
 var
-a : integer;
-
+d : array [ 1 .. 10 ] of string;
 
 begin
-    println(a);
+    d[2] = "Bonjour";
 end

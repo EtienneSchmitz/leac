@@ -42,7 +42,6 @@ public final class NodeAssign extends Node {
 	public Move generateIntermediateCode() {
 		Exp lhs = this.getLhs().generateIntermediateCode();
 		Exp rhs = this.getRhs().generateIntermediateCode();
-
 		return new Move(lhs,rhs);
 	}
 }

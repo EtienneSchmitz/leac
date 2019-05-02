@@ -32,6 +32,8 @@ public final class NodeCallFct extends NodeExp {
 	}
 
 	public String toString() {
+
+		System.out.println(name);
 		return name + '_' + super.toString();
 	}
 
