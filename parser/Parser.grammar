@@ -86,7 +86,7 @@
 %typeof TOKEN_LIT_INTEGER = "Integer";
 %typeof TOKEN_TRUE, TOKEN_FALSE = "Boolean";
 %typeof TOKEN_NULL = "Object";
-%typeof identifier_list = "IdentifierListSymbol";
+%typeof identifier_list = "IdentifierList";
 %typeof while_statement= "NodeWhile";
 %typeof switch_statement= "NodeSwitch";
 %typeof case_statement_list = "NodeList";
@@ -184,7 +184,7 @@ index_type=
 	;
 
 enumerated_type=
-	init_enumerated_type TOKEN_LPAR identifier_list.list TOKEN_RPAR {:int length= list.getList().size(); return new TypeEnumRange(new TypeItemEnum(0,list.getList().get(0)),new TypeItemEnum(length-1,list.getList().get(length-1)));:}
+	init_enumerated_type TOKEN_LPAR identifier_list.list TOKEN_RPAR 
 	;
 
 init_enumerated_type=
@@ -234,13 +234,13 @@ variable_declaration_list=
 
 variable_declaration=
 	identifier_list.list TOKEN_COLON type.type TOKEN_SEMIC 	{: NodeList nodeList = new NodeList(); 
-															   for(String id : list.getList()) nodeList.add(new NodeId(id, type));	 
+															   for(String id : list) nodeList.add(new NodeId(id, type));	 
 															   return nodeList; :}
 	;
 
 identifier_list=
 	identifier_list.list TOKEN_COMMA TOKEN_IDENTIFIER.id {: list.add(id); return list; :}
-	| TOKEN_IDENTIFIER.id                                {: IdentifierListSymbol list = new IdentifierListSymbol(); list.add(id); return list; :}
+	| TOKEN_IDENTIFIER.id                                {: IdentifierList list = new IdentifierList(); list.add(id); return list; :}
 	;
 
 procedure_definition_part=
@@ -393,7 +393,7 @@ case_statement_list=
 	;
 
 case_statement=
-	TOKEN_CASE identifier_list.idlist TOKEN_COLON statement.stm                 {: NodeCaseList list = new NodeCaseList(); for(String id : idlist.getList()){list.add(new NodeCase(id,stm));} return list; :}
+	TOKEN_CASE identifier_list.idlist TOKEN_COLON statement.stm                 {: NodeCaseList list = new NodeCaseList(); for(String id : idlist){list.add(new NodeCase(id,stm));} return list; :}
 	;
 
 case_default=
