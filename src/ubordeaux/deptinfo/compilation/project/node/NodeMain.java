@@ -1,8 +1,12 @@
 package ubordeaux.deptinfo.compilation.project.node;
 
+import java.util.Map;
+
 import ubordeaux.deptinfo.compilation.project.environment.FunctionEnvironment;
 import ubordeaux.deptinfo.compilation.project.environment.TypeEnvironment;
 import ubordeaux.deptinfo.compilation.project.intermediateCode.IntermediateCode;
+import ubordeaux.deptinfo.compilation.project.intermediateCode.Stm;
+import ubordeaux.deptinfo.compilation.project.intermediateCode.StmList;
 import ubordeaux.deptinfo.compilation.project.main.ClonableSymbol;
 import ubordeaux.deptinfo.compilation.project.main.CompilationException;
 
@@ -61,6 +65,14 @@ public class NodeMain extends Node {
 
 	@Override
 	public IntermediateCode generateIntermediateCode() {
-		return getStatements().generateIntermediateCode();
+		StmList list = null;
+		
+		for(Map.Entry<String, NodeFunction> pair : getFunctionEnvironment().getAll()) {
+			if(pair.getValue().isDefined()) {
+				list = new StmList((Stm)pair.getValue().generateIntermediateCode(), list);
+			}
+		}
+		
+		return new StmList((Stm)getStatements().generateIntermediateCode(), list);
 	}
 }
