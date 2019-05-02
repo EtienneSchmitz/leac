@@ -92,8 +92,7 @@
 %typeof case_statement_list = "NodeList";
 %typeof case_statement = "NodeCaseList";
 %typeof case_default = "NodeCase";
-%typeof procedure_definition_list, procedure_definition_part = "NodeList"; 
-%typeof procedure_definition = "NodeFunction";
+%typeof procedure_definition = "TypeFunct";
 %typeof feature_type = "TypeFeature";
 %typeof feature_list_type = "TypeFeatureList";
 %typeof structure_type = "TypeStruct";
@@ -212,7 +211,7 @@ range_type=
 	;
 
 pointer_type=
-	TOKEN_CIRC type
+	TOKEN_CIRC type.t						{: return new TypePointer(t); :}
 	;
 
 structure_type=
@@ -250,28 +249,27 @@ identifier_list=
 	;
 
 procedure_definition_part=
-	| procedure_definition_list.list								{: return list;	:}
+	| procedure_definition_list						
 	;
 
 procedure_definition_list=
-	procedure_definition_list.list procedure_definition.func		{: list.add(func); return list;	:}
-	| procedure_definition.func										{: return new NodeList(func);	:}
+	procedure_definition_list procedure_definition		
+	| procedure_definition									
 	;
 
 procedure_definition=
-	procedure_definition_head.decl block.def				{: NodeFunction function = new NodeFunction(decl, def); funcEnv.add(function.getDeclaration().getName(), function);
-															   stackEnv.closeCurrentScope();
-														   	   return function; :}
-	| procedure_declaration_head.decl TOKEN_SEMIC		{: NodeFunction function = new NodeFunction(decl, null); funcEnv.add(function.getDeclaration().getName(), function);
-														   return function; :}
+	procedure_definition_head.decl block.def			{: funcEnv.get(decl.getName()).setDefinition(def); stackEnv.closeCurrentScope(); return decl; :}
+	| procedure_declaration_head.decl TOKEN_SEMIC		{: return decl; :}
 	;
 
 procedure_definition_head=
-	procedure_head.funct	{: return funct;	:}
+	procedure_head.decl		{: NodeFunction function = new NodeFunction(decl, null); funcEnv.add(decl.getName(), function);
+							   return decl;	:}
 	;
 
 procedure_declaration_head=
-	procedure_head.funct	{: return funct; 	:}
+	procedure_head.decl		{: NodeFunction function = new NodeFunction(decl, null); funcEnv.add(function.getDeclaration().getName(), function);
+							   return decl; 	:}
 	;
 
 procedure_head=
@@ -333,7 +331,7 @@ procedure_statement=
 	;
 
 procedure_expression=
-	TOKEN_IDENTIFIER.id TOKEN_LPAR expression_part.args TOKEN_RPAR			{: TypeFunct decl = funcEnv.get(id).getDeclaration();
+	TOKEN_IDENTIFIER.id TOKEN_LPAR expression_part.args TOKEN_RPAR			{: TypeFunct decl = funcEnv.get(id).getDeclaration();																			   
 																			   return new NodeCallFct(id, decl, args); :}
 	;
 
@@ -410,7 +408,7 @@ case_default=
 variable_access=
 	TOKEN_IDENTIFIER.id                                            {: System.out.println("Asked for " + id + "."); return stackEnv.get(id); :}
 	| variable_access.id TOKEN_LBRACKET expression.exp TOKEN_RBRACKET {: return new NodeArrayAccess(id,exp); :}
-	| expression TOKEN_CIRC
+	| expression.e TOKEN_CIRC										  {: return new NodePtrAccess(e); :}
 	;
 
 expression=
