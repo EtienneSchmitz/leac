@@ -49,8 +49,13 @@ public final class NodeIf extends Node {
 	public IntermediateCode generateIntermediateCode() {
 		// Generate intermediate code of the operator, then and else.
 		Exp e = ((NodeRel) this.getExpNode()).generateIntermediateCode();
-
-		Stm stm_then = (Stm) this.getThenNode().generateIntermediateCode();
+		Stm stm_then = null;
+		IntermediateCode stm_before = this.getThenNode().generateIntermediateCode();
+		if(stm_before instanceof Stm)
+			stm_then = (Stm) stm_before;
+		else if(stm_before instanceof Exp) {
+			stm_then = new ExpStm((Exp) stm_before);
+		}
 
 
 		// Create the Label Location.
