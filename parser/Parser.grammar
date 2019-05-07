@@ -28,10 +28,10 @@
         System.out.println(msg);
     }
 
-	//private Environment typeEnvironment = new Environment("types");
 	private TypeEnvironment typeEnv = new TypeEnvironment();
 	private FunctionEnvironment funcEnv = new FunctionEnvironment();
 	private StackEnvironment stackEnv = new StackEnvironment();
+	
 	private String type_declaration_name;
 :};
 
@@ -403,41 +403,41 @@ case_statement=
 	;
 
 case_default=
-	/* empty */                                                                 {: return new NodeCase(null); :}
-	| TOKEN_DEFAULT TOKEN_COLON statement.stm                                   {: return new NodeCase(stm); :}
+	/* empty */                                                         {: return new NodeCase(null); 												:}
+	| TOKEN_DEFAULT TOKEN_COLON statement.stm                           {: return new NodeCase(stm); 												:}
 	; // Change
 
 variable_access=
-	TOKEN_IDENTIFIER.id                                            {: System.out.println("Asked for " + id + "."); return stackEnv.get(id); :}
-	| variable_access.id TOKEN_LBRACKET expression.exp TOKEN_RBRACKET {: return new NodeArrayAccess(id,exp); :}
-	| expression.e TOKEN_CIRC										  {: return new NodePtrAccess(e); :}
+	TOKEN_IDENTIFIER.id                                            		{: System.out.println("Asked for " + id + "."); return stackEnv.get(id);	:}
+	| variable_access.id TOKEN_LBRACKET expression.exp TOKEN_RBRACKET 	{: return new NodeArrayAccess(id,exp); 										:}
+	| expression.e TOKEN_CIRC										  	{: return new NodePtrAccess(e); 											:}
 	;
 
 expression=
-	expression.e1 TOKEN_PLUS expression.e2						   	{: return new NodeOp(Operator.PLUS,e1, e2); :}
-	| expression.e1 TOKEN_MINUS expression.e2						{: return new NodeOp(Operator.MINUS,e1, e2); :}
-	| expression.e1 TOKEN_TIMES expression.e2						{: return new NodeOp(Operator.TIMES,e1, e2); :}
-	| expression.e1 TOKEN_DIV expression.e2							{: return new NodeOp(Operator.DIVIDE, e1, e2); :}
-	| TOKEN_MINUS expression.e  @PRIORMAX                           {: return new NodeOp(Operator.MINUS,e); :}
-	| expression.e1 TOKEN_OR expression.e2							{: return new NodeRel(Relation_Operator.OR, e1, e2); :}
-	| expression.e1 TOKEN_AND expression.e2							{: return new NodeRel(Relation_Operator.AND, e1, e2); :}
-	| TOKEN_NOT expression.e                                        {: return new NodeRel(Relation_Operator.NOT, e); :}
-	| expression.e1 TOKEN_LT expression.e2							{: return new NodeRel(Relation_Operator.LT, e1, e2); :}
-	| expression.e1 TOKEN_LE expression.e2							{: return new NodeRel(Relation_Operator.LE, e1, e2); :}
-	| expression.e1 TOKEN_GT expression.e2							{: return new NodeRel(Relation_Operator.GT, e1, e2); :}
-	| expression.e1 TOKEN_GE expression.e2 						   	{: return new NodeRel(Relation_Operator.GE, e1, e2); :}
-	| expression.e1 TOKEN_EQ expression.e2							{: return new NodeRel(Relation_Operator.EQ, e1, e2); :}
-	| expression.e1 TOKEN_NE expression.e2							{: return new NodeRel(Relation_Operator.NEQ, e1, e2); :}
-	| TOKEN_LPAR expression.e TOKEN_RPAR                            {: return e; :}
-	| procedure_expression.funcCall									{: return funcCall; :}
+	expression.e1 TOKEN_PLUS expression.e2						   		{: return new NodeOp(Operator.PLUS,e1, e2); 								:}
+	| expression.e1 TOKEN_MINUS expression.e2							{: return new NodeOp(Operator.MINUS,e1, e2); 								:}
+	| expression.e1 TOKEN_TIMES expression.e2							{: return new NodeOp(Operator.TIMES,e1, e2); 								:}
+	| expression.e1 TOKEN_DIV expression.e2								{: return new NodeOp(Operator.DIVIDE, e1, e2); 								:}
+	| TOKEN_MINUS expression.e  @PRIORMAX                           	{: return new NodeOp(Operator.MINUS,e); 									:}
+	| expression.e1 TOKEN_OR expression.e2								{: return new NodeRel(Relation_Operator.OR, e1, e2); 						:}
+	| expression.e1 TOKEN_AND expression.e2								{: return new NodeRel(Relation_Operator.AND, e1, e2); 						:}
+	| TOKEN_NOT expression.e                                        	{: return new NodeRel(Relation_Operator.NOT, e); 							:}
+	| expression.e1 TOKEN_LT expression.e2								{: return new NodeRel(Relation_Operator.LT, e1, e2); 						:}
+	| expression.e1 TOKEN_LE expression.e2								{: return new NodeRel(Relation_Operator.LE, e1, e2); 						:}
+	| expression.e1 TOKEN_GT expression.e2								{: return new NodeRel(Relation_Operator.GT, e1, e2); 						:}
+	| expression.e1 TOKEN_GE expression.e2 						   		{: return new NodeRel(Relation_Operator.GE, e1, e2); 						:}
+	| expression.e1 TOKEN_EQ expression.e2								{: return new NodeRel(Relation_Operator.EQ, e1, e2); 						:}
+	| expression.e1 TOKEN_NE expression.e2								{: return new NodeRel(Relation_Operator.NEQ, e1, e2); 						:}
+	| TOKEN_LPAR expression.e TOKEN_RPAR                            	{: return e; 																:}
+	| procedure_expression.funcCall										{: return funcCall; 														:}
 	| variable_access
 	| literal
 	;
 
 literal=
-	TOKEN_LIT_INTEGER.literal       {: return new NodeLiteral(new TypeInt(literal), literal); :}
-	| TOKEN_LIT_STRING.literal      {: return new NodeLiteral(new TypeString(), literal); :}
-	| TOKEN_TRUE.literal            {: debug(literal); return new NodeLiteral(new TypeBoolean(), literal); :}
-	| TOKEN_FALSE.literal           {: return new NodeLiteral(new TypeBoolean(), literal); :}
-	| TOKEN_NULL.literal            {: return new NodeLiteral(new TypePointer(), literal); :}
+	TOKEN_LIT_INTEGER.literal      										{: return new NodeLiteral(new TypeInt(literal), literal); 					:}
+	| TOKEN_LIT_STRING.literal      									{: return new NodeLiteral(new TypeString(), literal); 						:}
+	| TOKEN_TRUE.literal            									{: debug(literal); return new NodeLiteral(new TypeBoolean(), literal); 		:}
+	| TOKEN_FALSE.literal           									{: return new NodeLiteral(new TypeBoolean(), literal); 						:}
+	| TOKEN_NULL.literal            									{: return new NodeLiteral(new TypePointer(), literal); 						:}
 	;

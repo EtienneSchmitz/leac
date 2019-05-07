@@ -51,8 +51,6 @@ import beaver.Scanner;
 Identifier						= [a-zA-Z_][a-zA-Z0-9_]*
 Integer 						= ([0-9]+)
 IntegerHexadecimal              = (0x[0-9A-F]+)
-//Decimal 							= ({Integer}(\.{Integer})?)|(\.{Integer})
-//Float 							= {Decimal}([eE][+-]?{Integer})?
 StringDelimiter 				= \"
 
 
